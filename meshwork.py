@@ -34,18 +34,31 @@ class MeshworkSystem:
         self.x, self.y, x_count, y_count = generate_grid(dx=0.1, dy=0.1)
 
         # Initialise all four values to random variables to begin.
-        self.activator = np.random.rand(x_count, y_count)
+        # self.activator = np.random.rand(x_count, y_count)
         # self.inhibitor = np.random.rand(x_count, y_count)
-        self.substrate = np.random.rand(x_count, y_count)
-        self.differentiation = np.random.rand(x_count, y_count)
+        # self.substrate = np.random.rand(x_count, y_count)
+        # self.differentiation = np.random.rand(x_count, y_count)
 
-        # self.activator = np.zeros((x_count, y_count))
+        self.activator = np.ones((x_count, y_count)) /  1000
         self.inhibitor = np.ones((x_count, y_count)) / 100
-        # self.substrate = np.zeros((x_count, y_count))
-        # self.differentiation = np.zeros((x_count, y_count))
+        self.substrate = np.ones((x_count, y_count))
+        self.differentiation = np.zeros((x_count, y_count))
+
+        self.add_differentiation()
 
         # To choose laplacian
         self.laplace = scipy.ndimage.laplace
+
+        pass
+
+    def add_differentiation(self, p = (0.0, 0.0), r = 1, amount = 1.0):
+        """
+        Adds a circle of subtrate in the middle.
+        """
+
+        mask = (self.x - p[0])**2 + (self.y - p[1])**2
+
+        self.differentiation += mask*amount
 
         pass
 
@@ -103,6 +116,8 @@ class MeshworkSystem:
             self.inhibitor += delH
             self.substrate += delS
             self.differentiation += delY
+
+            np.clip(self.differentiation, a_min=0.0, a_max=1.0)
 
         self.curr_step+=num
         pass

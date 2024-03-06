@@ -29,7 +29,7 @@ y = system.y
 
 ## Animate
 plotee = system.differentiation
-rng = (-40, 40)
+rng = (-1, 1)
 
 fig,ax = plt.subplots()
 plt.title(f"Meshwork Pattern: {system.curr_step}")
@@ -53,7 +53,7 @@ def animate(i):
 
 anim = FuncAnimation(fig, animate, init_func=init, frames=300)
 
-anim.save('test1-set-array-init.gif', writer='pillow')
+anim.save('animations/test1.gif', writer='pillow')
 # plt.show()
 
 """
