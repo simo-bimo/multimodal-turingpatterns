@@ -31,9 +31,9 @@ system.add_differentiation(p=(0,15), r=1)
 
 
 ## Animate
-plotee = system.activator
+plotee = system.differentiation
 rng = (0, 1)
-name = "meshwork-random-AHD"
+name = "meshwork-random-AHD-diffplot"
 
 fig,ax = plt.subplots()
 plt.title(f"Meshwork Pattern: {system.curr_step}")
