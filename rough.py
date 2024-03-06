@@ -29,10 +29,13 @@ y = system.y
 
 ## Animate
 plotee = system.differentiation
+rng = (-40, 40)
 
 fig,ax = plt.subplots()
 plt.title(f"Meshwork Pattern: {system.curr_step}")
-quad = ax.pcolormesh(x, y, plotee)
+quad = ax.pcolormesh(x, y, plotee, vmin=rng[0], vmax=rng[1])
+cb = plt.colorbar(quad)
+
 
 def init():
     quad.set_array(plotee.ravel())
@@ -43,10 +46,19 @@ def animate(i):
     system.take_step(1)
     plt.title(f"Meshwork Pattern: {system.curr_step}")
 
-    quad = ax.pcolormesh(x, y, plotee)
+    # quad = ax.pcolormesh(x, y, plotee, vmin=rng[0], vmax=rng[1])
+    # cb = plt.colorbar(quad)
+    quad.set_array(plotee.ravel())
     return quad,
 
-anim = FuncAnimation(fig, animate, frames=300)
+anim = FuncAnimation(fig, animate, init_func=init, frames=300)
 
-anim.save('test1.gif', writer='pillow')
-plt.show()
+anim.save('test1-set-array-init.gif', writer='pillow')
+# plt.show()
+
+"""
+Timing Results
+test1.gif: 1m50s
+test1-set-array: 0m7.8s
+test1-set-array-init: 0m7.7s
+"""
