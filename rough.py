@@ -1,4 +1,6 @@
 # Imports
+from signal import signal, SIGINT
+
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 
@@ -8,6 +10,7 @@ system = MeshworkSystem()
 x = system.x
 y = system.y
 
+system.add_differentiation(p=(0,15), r=1)
 
 
 ## PLOTTING
@@ -28,37 +31,42 @@ y = system.y
 
 
 ## Animate
-plotee = system.differentiation
-rng = (-1, 1)
+plotee = system.activator
+rng = (0, 1)
+name = "meshwork-random-AHD"
 
 fig,ax = plt.subplots()
 plt.title(f"Meshwork Pattern: {system.curr_step}")
 quad = ax.pcolormesh(x, y, plotee, vmin=rng[0], vmax=rng[1])
 cb = plt.colorbar(quad)
 
+interrupted = False
+def early_fin(signal, frame):
+    global interrupted
+    interrupted = True
+    pass
+signal(SIGINT, early_fin)
 
 def init():
     quad.set_array(plotee.ravel())
     return quad,
 
-
 def animate(i):
-    system.take_step(1)
-    plt.title(f"Meshwork Pattern: {system.curr_step}")
+    global interrupted
+    if not interrupted:
+        system.take_step(50)
+        plt.title(f"Meshwork Pattern: {system.curr_step}")
 
-    # quad = ax.pcolormesh(x, y, plotee, vmin=rng[0], vmax=rng[1])
-    # cb = plt.colorbar(quad)
-    quad.set_array(plotee.ravel())
+        quad.set_array(plotee.ravel())
     return quad,
 
 anim = FuncAnimation(fig, animate, init_func=init, frames=300)
 
-anim.save('animations/test1.gif', writer='pillow')
+anim.save('animations/'+name+'.gif', writer='pillow', fps=30)
 # plt.show()
 
 """
 Timing Results
-test1.gif: 1m50s
-test1-set-array: 0m7.8s
-test1-set-array-init: 0m7.7s
+noblit: 0m26s
+blit: 0m28s
 """
