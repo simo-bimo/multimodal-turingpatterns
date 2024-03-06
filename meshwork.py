@@ -2,6 +2,11 @@ import numpy as np
 import scipy
 from utilities import generate_grid
 
+"""
+This code is based on a model proposed in the following paper:
+Guo, S., Sun, M. Z., & Zhao, X. (2021). Wavelength of a Turing-type mechanism regulates the morphogenesis of meshwork patterns. Scientific Reports, 11(1), 4813.
+"""
+
 class MeshworkSystem:
 
     def __init__(self):
@@ -15,7 +20,7 @@ class MeshworkSystem:
         self.rho_a = 0.03
         self.Da = 0.02
         # Parameters for inhibitor
-        self.v = 0.04
+        self.v = 0.4
         self.rho_h = 0.00005
         self.Dh = 0.26
         # Parameters for Substrate
@@ -40,15 +45,15 @@ class MeshworkSystem:
                                                                    top_right=(15, 15))
 
         # Initialise all four values to random variables to begin.
-        self.activator = np.random.rand(self.x_count, self.y_count) * 1.0
-        self.inhibitor = np.random.rand(self.x_count, self.y_count) * 1.0
+        # self.activator = np.random.rand(self.x_count, self.y_count) * 1.0
+        # self.inhibitor = np.random.rand(self.x_count, self.y_count) * 1.0
         # self.substrate = np.random.rand(self.x_count, self.y_count) 
-        self.differentiation = np.random.rand(self.x_count, self.y_count)
+        # self.differentiation = np.random.rand(self.x_count, self.y_count)
 
-        # self.activator = np.ones((self.x_count, self.y_count)) * 0.001
-        # self.inhibitor = np.ones((self.x_count, self.y_count)) * 0.01
+        self.activator = np.ones((self.x_count, self.y_count)) * 0.001
+        self.inhibitor = np.ones((self.x_count, self.y_count)) * 0.01
         self.substrate = np.ones((self.x_count, self.y_count))
-        # self.differentiation = np.ones((self.x_count, self.y_count)) * 0.0
+        self.differentiation = np.ones((self.x_count, self.y_count)) * 0.0
 
         # To choose laplacian
         self.laplace = scipy.ndimage.laplace
