@@ -1,40 +1,24 @@
 # Imports
 from signal import signal, SIGINT
 
+import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 
 from meshwork import MeshworkSystem
 from grayscott import GrayScott
 
-system = GrayScott()
+system = GrayScott(decay=2.5)
+system.activator = np.random.rand(system.x_count, system.y_count) * 1.0
+system.inhibitor = np.random.rand(system.x_count, system.y_count) * 1.0
+# system.add_activator(r=0.5, amount=0.1)
 x = system.x
 y = system.y
 
-# system.add_differentiation()
-
-
-## PLOTTING
-# plt.pcolor(x, y, plotee)
-# plt.savefig('1.png')
-
-# system.take_step(10)
-# plt.pcolor(x, y, plotee)
-# plt.savefig('10.png')
-
-# system.take_step(90)
-# plt.pcolor(x, y, plotee)
-# plt.savefig('100.png')
-
-# system.take_step(100)
-# plt.pcolor(x, y, plotee)
-# plt.savefig('200.png')
-
-
-## Animate
+## Animate Settings
 plotee = system.activator
 rng = (0, 1)
-name = "grayscott/test2"
+name = "grayscott/randAH decay=2.5"
 
 # fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(nrows=2, ncols=2, figsize=(20,12))
 fig, ax = plt.subplots()
@@ -76,7 +60,7 @@ def init():
 def animate(i):
     global interrupted
     if not interrupted:
-        system.take_step(300)
+        system.take_step(10)
         fig.suptitle(f"Meshwork Pattern: {system.curr_step}")
 
         quad.set_array(plotee.ravel())
@@ -87,7 +71,7 @@ def animate(i):
     #     quad4.set_array(system.differentiation.ravel())
     # return quad1,quad2,quad3,quad4
 
-anim = FuncAnimation(fig, animate, init_func=init, frames=300)
+anim = FuncAnimation(fig, animate, init_func=init, frames=100)
 
 anim.save('animations/'+name+'.gif', writer='pillow', fps=30)
 # plt.show()
