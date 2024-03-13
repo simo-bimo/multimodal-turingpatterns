@@ -9,16 +9,17 @@ from meshwork import MeshworkSystem
 from grayscott import GrayScott
 
 system = GrayScott()
-# system.activator = np.random.rand(system.x_count, system.y_count) * 0.5
-# system.inhibitor = np.random.rand(system.x_count, system.y_count) * 1.0
-system.add_activator(r=0.5, amount=1.0)
+system.activator = np.ones((system.x_count, system.y_count)) * 1.0
+system.inhibitor = np.random.rand(system.x_count, system.y_count) * 0.0
+# system.add_activator(r=0.5, amount=1.0)
+system.add_inhibitor(r=0.2, amount=1.0)
 x = system.x
 y = system.y
 
 ## Animate Settings
 plotee = system.activator
 rng = (0, 1)
-name = "grayscott/rand+spot - only laplace"
+name = "grayscott/karlsims settings"
 
 # fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(nrows=2, ncols=2, figsize=(20,12))
 fig, ax = plt.subplots()

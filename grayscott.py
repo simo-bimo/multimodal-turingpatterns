@@ -3,7 +3,7 @@ import scipy
 from utilities import generate_grid
 
 class GrayScott:
-    def __init__(self, feed=0.04, decay=0.006):
+    def __init__(self, feed=0.055, decay=0.062):
         # General Params
         self.dx=0.04
         self.dy=0.04
@@ -11,12 +11,12 @@ class GrayScott:
         self.feed = feed
         self.decay = decay
         # Parameters for activator
-        self.Da = 0.01
+        self.Da = 1
         # Parameters for inhibitor
-        self.Dh = 0.005
+        self.Dh = 0.5
 
         # Parameters for Simulation
-        self.dt = 0.1
+        self.dt = 1.0
         self.curr_step = 0
 
         # Two grids, one with a set of x coordinates, 
@@ -32,7 +32,8 @@ class GrayScott:
         # self.inhibitor = np.ones((self.x_count, self.y_count)) * 0.01
 
         # To choose laplacian
-        stencil = np.array([[0, 1, 0],[1, -4, 1], [0, 1, 0]])
+        # stencil = np.array([[0, 1, 0],[1, -4, 1], [0, 1, 0]])
+        stencil = np.array([[0.05, 0.2, 0.05],[0.2, -1, 0.2], [0.05, 0.2, 0.05]])
         lapl = lambda x: scipy.ndimage.convolve(x, stencil, mode='wrap')
         self.laplace = lapl
         pass
@@ -41,7 +42,7 @@ class GrayScott:
         A = self.activator
         H = self.inhibitor
         
-        return (self.feed*(1.0-A)\
+        return (self.feed*(np.ones((self.x_count, self.y_count))-A)\
                 - A * np.power(H, 2)\
                 + self.Da*self.laplace(A))
     
@@ -55,10 +56,8 @@ class GrayScott:
     
     def take_step(self, num=1):
         for i in range(0, num):
-            # delA = self.deltaA() * self.dt
-            # delH = self.deltaH() * self.dt
-            delA = self.Da * self.laplace(self.activator)
-            delH = self.Dh * self.laplace(self.inhibitor)
+            delA = self.deltaA() * self.dt
+            delH = self.deltaH() * self.dt
 
             self.activator += delA
             self.inhibitor += delH
@@ -80,5 +79,19 @@ class GrayScott:
 
         self.activator += np.random.rand(self.x_count, self.y_count) / 100
         np.clip(self.activator, a_min=0.0, a_max=1.0)
+
+        pass
+
+    def add_inhibitor(self, p = (0.0, 0.0), r = 1.0, amount = 1.0):
+        """
+        Adds a circle of activation, by default in the middle.
+        """
+
+        mask = (self.x - p[0])**2 + (self.y - p[1])**2 <= r**2
+
+        self.inhibitor += mask*amount
+
+        self.inhibitor += np.random.rand(self.x_count, self.y_count) / 100
+        np.clip(self.inhibitor, a_min=0.0, a_max=1.0)
 
         pass
