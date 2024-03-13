@@ -3,7 +3,7 @@ import scipy
 from utilities import generate_grid
 
 class GrayScott:
-    def __init__(self, feed=0.025, decay=0.15):
+    def __init__(self, feed=0.04, decay=0.006):
         # General Params
         self.dx=0.04
         self.dy=0.04
@@ -11,9 +11,9 @@ class GrayScott:
         self.feed = feed
         self.decay = decay
         # Parameters for activator
-        self.Da = 0.00001
+        self.Da = 0.01
         # Parameters for inhibitor
-        self.Dh = 0.00002
+        self.Dh = 0.005
 
         # Parameters for Simulation
         self.dt = 0.1
@@ -24,7 +24,7 @@ class GrayScott:
         # The next two values are just the number of points.
         self.x, self.y, self.x_count, self.y_count = generate_grid(dx=self.dx, dy=self.dy, bottom_left=(-1,-1), top_right=(1,1))
 
-        # Initialise all four values to random variables to begin.
+        # Initialise all values to random variables to begin.
         self.activator = np.random.rand(self.x_count, self.y_count) * 0
         self.inhibitor = np.random.rand(self.x_count, self.y_count) * 0
 
@@ -32,7 +32,9 @@ class GrayScott:
         # self.inhibitor = np.ones((self.x_count, self.y_count)) * 0.01
 
         # To choose laplacian
-        self.laplace = scipy.ndimage.laplace
+        stencil = np.array([[0, 1, 0],[1, -4, 1], [0, 1, 0]])
+        lapl = lambda x: scipy.ndimage.convolve(x, stencil, mode='wrap')
+        self.laplace = lapl
         pass
     
     def deltaA(self):

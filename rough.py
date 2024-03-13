@@ -9,16 +9,16 @@ from meshwork import MeshworkSystem
 from grayscott import GrayScott
 
 system = GrayScott(decay=2.5)
-system.activator = np.random.rand(system.x_count, system.y_count) * 1.0
-system.inhibitor = np.random.rand(system.x_count, system.y_count) * 1.0
-# system.add_activator(r=0.5, amount=0.1)
+system.activator = np.random.rand(system.x_count, system.y_count) * 0.5
+# system.inhibitor = np.random.rand(system.x_count, system.y_count) * 1.0
+system.add_activator(r=0.5, amount=1.0)
 x = system.x
 y = system.y
 
 ## Animate Settings
 plotee = system.activator
 rng = (0, 1)
-name = "grayscott/randAH decay=2.5"
+name = "grayscott/rand+spot - new_laplace"
 
 # fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(nrows=2, ncols=2, figsize=(20,12))
 fig, ax = plt.subplots()
