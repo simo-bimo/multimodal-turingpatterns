@@ -55,8 +55,10 @@ class GrayScott:
     
     def take_step(self, num=1):
         for i in range(0, num):
-            delA = self.deltaA() * self.dt
-            delH = self.deltaH() * self.dt
+            # delA = self.deltaA() * self.dt
+            # delH = self.deltaH() * self.dt
+            delA = self.Da * self.laplace(self.activator)
+            delH = self.Dh * self.laplace(self.inhibitor)
 
             self.activator += delA
             self.inhibitor += delH

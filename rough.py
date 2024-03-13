@@ -8,8 +8,8 @@ from matplotlib.animation import FuncAnimation
 from meshwork import MeshworkSystem
 from grayscott import GrayScott
 
-system = GrayScott(decay=2.5)
-system.activator = np.random.rand(system.x_count, system.y_count) * 0.5
+system = GrayScott()
+# system.activator = np.random.rand(system.x_count, system.y_count) * 0.5
 # system.inhibitor = np.random.rand(system.x_count, system.y_count) * 1.0
 system.add_activator(r=0.5, amount=1.0)
 x = system.x
@@ -18,7 +18,7 @@ y = system.y
 ## Animate Settings
 plotee = system.activator
 rng = (0, 1)
-name = "grayscott/rand+spot - new_laplace"
+name = "grayscott/rand+spot - only laplace"
 
 # fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(nrows=2, ncols=2, figsize=(20,12))
 fig, ax = plt.subplots()
@@ -60,7 +60,7 @@ def init():
 def animate(i):
     global interrupted
     if not interrupted:
-        system.take_step(10)
+        system.take_step(20)
         fig.suptitle(f"Meshwork Pattern: {system.curr_step}")
 
         quad.set_array(plotee.ravel())
@@ -71,7 +71,7 @@ def animate(i):
     #     quad4.set_array(system.differentiation.ravel())
     # return quad1,quad2,quad3,quad4
 
-anim = FuncAnimation(fig, animate, init_func=init, frames=100)
+anim = FuncAnimation(fig, animate, init_func=init, frames=1000)
 
 anim.save('animations/'+name+'.gif', writer='pillow', fps=30)
 # plt.show()
