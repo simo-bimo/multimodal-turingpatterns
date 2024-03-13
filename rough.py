@@ -10,7 +10,8 @@ from grayscott import GrayScott
 
 system = GrayScott()
 system.activator = np.ones((system.x_count, system.y_count)) * 1.0
-system.inhibitor = np.random.rand(system.x_count, system.y_count) * 0.0
+# system.activator = np.random.rand(system.x_count, system.y_count) * 0.5
+# system.inhibitor = np.random.rand(system.x_count, system.y_count) * 0.5
 # system.add_activator(r=0.5, amount=1.0)
 system.add_inhibitor(r=0.2, amount=1.0)
 x = system.x
@@ -19,7 +20,7 @@ y = system.y
 ## Animate Settings
 plotee = system.activator
 rng = (0, 1)
-name = "grayscott/karlsims settings"
+name = "grayscott/karlsims, rand both"
 
 # fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(nrows=2, ncols=2, figsize=(20,12))
 fig, ax = plt.subplots()
@@ -43,11 +44,11 @@ cb = plt.colorbar(quad)
 # plt.subplots_adjust(hspace=0.5)
 
 interrupted = False
-def early_fin(signal, frame):
-    global interrupted
-    interrupted = True
-    pass
-signal(SIGINT, early_fin)
+# def early_fin(signal, frame):
+#     global interrupted
+#     interrupted = True
+#     pass
+# signal(SIGINT, early_fin)
 
 def init():
     quad.set_array(plotee.ravel())

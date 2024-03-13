@@ -24,12 +24,14 @@ class GrayScott:
         # The next two values are just the number of points.
         self.x, self.y, self.x_count, self.y_count = generate_grid(dx=self.dx, dy=self.dy, bottom_left=(-1,-1), top_right=(1,1))
 
-        # Initialise all values to random variables to begin.
-        self.activator = np.random.rand(self.x_count, self.y_count) * 0
-        self.inhibitor = np.random.rand(self.x_count, self.y_count) * 0
+        # Initialise to correct data type
+        self.activator = np.zeros((self.x_count, self.y_count))
+        self.inhibitor = np.zeros((self.x_count, self.y_count))
 
-        # self.activator = np.ones((self.x_count, self.y_count)) * 0.001
-        # self.inhibitor = np.ones((self.x_count, self.y_count)) * 0.01
+        # Initialise all values to random variables to begin.
+        self.activator += np.random.rand(self.x_count, self.y_count) * 0
+        self.inhibitor += np.random.rand(self.x_count, self.y_count) * 0
+
 
         # To choose laplacian
         # stencil = np.array([[0, 1, 0],[1, -4, 1], [0, 1, 0]])
