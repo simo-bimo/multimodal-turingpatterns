@@ -20,7 +20,7 @@ y = system.y
 ## Animate Settings
 plotee = system.activator
 rng = (0, 1)
-name = "grayscott/karlsims, rand both"
+name = "grayscott/karlsims, big domain"
 
 # fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(nrows=2, ncols=2, figsize=(20,12))
 fig, ax = plt.subplots()

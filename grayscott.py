@@ -22,15 +22,15 @@ class GrayScott:
         # Two grids, one with a set of x coordinates, 
         # one with a set of y coordinates.
         # The next two values are just the number of points.
-        self.x, self.y, self.x_count, self.y_count = generate_grid(dx=self.dx, dy=self.dy, bottom_left=(-1,-1), top_right=(1,1))
+        self.x, self.y, self.x_count, self.y_count = generate_grid(dx=self.dx, dy=self.dy, bottom_left=(-10,-10), top_right=(10,10))
 
         # Initialise to correct data type
         self.activator = np.zeros((self.x_count, self.y_count))
         self.inhibitor = np.zeros((self.x_count, self.y_count))
 
         # Initialise all values to random variables to begin.
-        self.activator += np.random.rand(self.x_count, self.y_count) * 0
-        self.inhibitor += np.random.rand(self.x_count, self.y_count) * 0
+        # self.activator += np.random.rand(self.x_count, self.y_count) * 0
+        # self.inhibitor += np.random.rand(self.x_count, self.y_count) * 0
 
 
         # To choose laplacian
@@ -38,6 +38,8 @@ class GrayScott:
         stencil = np.array([[0.05, 0.2, 0.05],[0.2, -1, 0.2], [0.05, 0.2, 0.05]])
         lapl = lambda x: scipy.ndimage.convolve(x, stencil, mode='wrap')
         self.laplace = lapl
+
+        self.zero_tol = 1e-6
         pass
     
     def deltaA(self):
@@ -66,6 +68,10 @@ class GrayScott:
 
             np.clip(self.activator, a_min=0.0, a_max=1.0)
             np.clip(self.inhibitor, a_min=0.0, a_max=1.0)
+
+            # clip values near zero to zero.
+            self.activator[self.activator < self.zero_tol] = 0.0
+            self.inhibitor[self.inhibitor < self.zero_tol] = 0.0
 
         self.curr_step+=num
         pass
