@@ -1,6 +1,4 @@
 # Imports
-from signal import signal, SIGINT
-
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
@@ -8,8 +6,8 @@ from matplotlib.animation import FuncAnimation
 from meshwork import MeshworkSystem
 from grayscott import GrayScott
 
-system = GrayScott()
-system.activator = np.ones((system.x_count, system.y_count)) * 1.0
+system = GrayScott(dt=1.0)
+system.set_activator(np.ones((system.x_count, system.y_count)) * 1.0)
 # system.activator = np.random.rand(system.x_count, system.y_count) * 0.5
 # system.inhibitor = np.random.rand(system.x_count, system.y_count) * 0.5
 # system.add_activator(r=0.5, amount=1.0)
@@ -20,7 +18,7 @@ y = system.y
 ## Animate Settings
 plotee = system.activator
 rng = (0, 1)
-name = "grayscott/karlsims, big domain"
+name = "test1"
 
 # fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(nrows=2, ncols=2, figsize=(20,12))
 fig, ax = plt.subplots()
@@ -43,13 +41,6 @@ cb = plt.colorbar(quad)
 
 # plt.subplots_adjust(hspace=0.5)
 
-interrupted = False
-# def early_fin(signal, frame):
-#     global interrupted
-#     interrupted = True
-#     pass
-# signal(SIGINT, early_fin)
-
 def init():
     quad.set_array(plotee.ravel())
     return quad,
@@ -60,12 +51,10 @@ def init():
     # return quad1,quad2,quad3,quad4
 
 def animate(i):
-    global interrupted
-    if not interrupted:
-        system.take_step(20)
-        fig.suptitle(f"Meshwork Pattern: {system.curr_step}")
+    system.take_step(20)
+    fig.suptitle(f"Meshwork Pattern: {system.curr_step}")
 
-        quad.set_array(plotee.ravel())
+    quad.set_array(plotee.ravel())
     return quad,
     #     quad1.set_array(system.activator.ravel())
     #     quad2.set_array(system.inhibitor.ravel())
@@ -73,7 +62,7 @@ def animate(i):
     #     quad4.set_array(system.differentiation.ravel())
     # return quad1,quad2,quad3,quad4
 
-anim = FuncAnimation(fig, animate, init_func=init, frames=1000)
+anim = FuncAnimation(fig, animate, init_func=init, frames=500)
 
 anim.save('animations/'+name+'.gif', writer='pillow', fps=30)
 # plt.show()
