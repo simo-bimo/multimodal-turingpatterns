@@ -1,5 +1,4 @@
 import numpy as np
-import scipy
 from model import Model
 
 class GrayScott(Model):

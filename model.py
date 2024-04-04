@@ -52,7 +52,7 @@ class Model:
 		self.curr_step+=num
 		pass
 	
-	def generate_grid(dx=1, dy=1, bottom_left=(-5,-5), top_right=(5,5)):
+	def generate_grid(dx=1, dy=1, bottom_left=(-5,-5), top_right=(5,5), **kwargs):
 		'''
 		Generates a grid of x values and y values, 
 		based on the distance between points (dx, dy),
@@ -73,6 +73,6 @@ class Model:
 		x = np.linspace(x_start, x_stop, x_num)
 		y = np.linspace(y_start, y_stop, y_num)
 
-		x_vals, y_vals = np.meshgrid(x,y)
+		x_vals, y_vals = np.meshgrid(x,y, **kwargs)
 
 		return x_vals, y_vals, x_num, y_num
