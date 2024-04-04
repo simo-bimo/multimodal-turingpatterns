@@ -1,7 +1,6 @@
 import numpy as np
 import scipy
 from model import Model
-from utilities import generate_grid
 
 class GrayScott(Model):
 	def __init__(self, feed=0.055, decay=0.062, **kwargs):
@@ -10,9 +9,9 @@ class GrayScott(Model):
 		self.feed = feed
 		self.decay = decay
 		
-		# Parameters for activator
-		self.Da = 1
 		# Parameters for inhibitor
+		self.Da = 1
+		# Parameters for activator
 		self.Dh = 0.5
 		
 		# Initialise to zeros
