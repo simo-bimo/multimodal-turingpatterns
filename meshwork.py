@@ -1,6 +1,6 @@
 import numpy as np
 import scipy
-from utilities import generate_grid
+from model import Model
 
 """
 This code is based on a model proposed in the following paper:
@@ -39,7 +39,7 @@ class MeshworkSystem:
         # Two grids, one with a set of x coordinates, 
         # one with a set of y coordinates.
         # The next two values are just the number of points.
-        self.x, self.y, self.x_count, self.y_count = generate_grid(dx=self.dx, dy=self.dy,
+        self.x, self.y, self.x_count, self.y_count = Model.generate_grid(dx=self.dx, dy=self.dy,
                                                                    bottom_left = (-15, -15),
                                                                    top_right=(15, 15))
 

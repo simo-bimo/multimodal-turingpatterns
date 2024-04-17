@@ -5,24 +5,26 @@ from matplotlib.animation import FuncAnimation
 
 from meshwork import MeshworkSystem
 from grayscott import GrayScott
+from optical import Optical
 
-system = GrayScott(dt=1.0)
-system.set_activator(np.ones((system.x_count, system.y_count)) * 1.0)
+system = Optical(dx=0.1, dy=0.1, #  bottom_left=(-1,-1), top_right=(1,1), 
+				dz=0.1, d=10, chi=-1)
+# system.set_activator(np.ones((system.x_count, system.y_count)) * 1.0)
 # system.activator = np.random.rand(system.x_count, system.y_count) * 0.5
 # system.inhibitor = np.random.rand(system.x_count, system.y_count) * 0.5
 # system.add_activator(r=0.5, amount=1.0)
-system.add_inhibitor(r=0.2, amount=1.0)
+# system.add_inhibitor(r=0.2, amount=1.0)
 x = system.x
 y = system.y
 
 ## Animate Settings
-plotee = system.activator
+plotee = np.abs(system.transverse_backward[0])
 rng = (0, 1)
-name = "test1"
+name = "optical/1_backward_field"
 
 # fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(nrows=2, ncols=2, figsize=(20,12))
 fig, ax = plt.subplots()
-fig.suptitle(f"Gray Scott Model: {system.curr_step}")
+fig.suptitle(f"Optical Model: {system.curr_step}")
 quad = ax.pcolormesh(x, y, plotee, vmin=rng[0], vmax=rng[1])
 cb = plt.colorbar(quad)
 # quad1 = ax1.pcolormesh(x, y, system.activator, vmin=rng[0], vmax=rng[1])
@@ -51,7 +53,7 @@ def init():
     # return quad1,quad2,quad3,quad4
 
 def animate(i):
-    system.take_step(20)
+    system.take_step(100)
     fig.suptitle(f"Meshwork Pattern: {system.curr_step}")
 
     quad.set_array(plotee.ravel())
@@ -62,7 +64,7 @@ def animate(i):
     #     quad4.set_array(system.differentiation.ravel())
     # return quad1,quad2,quad3,quad4
 
-anim = FuncAnimation(fig, animate, init_func=init, frames=500)
+anim = FuncAnimation(fig, animate, init_func=init, frames=50)
 
 anim.save('animations/'+name+'.gif', writer='pillow', fps=30)
 # plt.show()

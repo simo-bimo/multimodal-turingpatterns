@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 
 class Optical(Model):
-	def __init__(self, d=1.0, dz=0.04, chi=1, R=0.9, **kwargs):
+	def __init__(self, d=1.0, dz=0.04, chi=-0.9, R=0.9, l_d=1.0, tau=1.0, **kwargs):
 		super().__init__(**kwargs)
 		self.cavity_distance = d
 		self.dz = dz
@@ -13,14 +13,27 @@ class Optical(Model):
 		self.reflectivity = R
 		self.kerr_effect = chi
 		
-		self.excitation_density = np.ones((self.x_count, self.y_count))
+		self.diffusion_distance = l_d
+		self.relaxation_time = tau
+		
+		self.excitation_density = np.zeros((self.x_count, self.y_count))
 		self.transverse_forward = np.zeros((self.num_z, self.x_count, self.y_count), dtype=np.cdouble)
 		self.transverse_backward = np.zeros((self.num_z, self.x_count, self.y_count), dtype=np.cdouble)
 		
-		# Add a gaussian as initial state.
-		# self.excitation_density += np.exp(-(self.x**2 + self.y**2))
+		# initial condition is a gaussian from the laser
+		# I'm just assuming that this is what it should look like. I don't know if the forwards field is
+		# actually affected in this way.
+		self.excitation_density += np.exp(-(self.x**2 + self.y**2))
 		self.transverse_forward[0] += np.exp(-(self.x**2 + self.y**2))
 		# self.excitation_density += np.exp(-(self.x**2 + self.y**2))
+  
+		self.values = {
+			"forward field": (self.transverse_forward, self.del_transverse_forward),
+			"backward field": (self.transverse_backward, self.del_transverse_backward),
+			"excitation density": (self.excitation_density, self.del_excitation_density),
+		}
+		
+		self.clip = False
 		
 		pass
 	
@@ -64,8 +77,11 @@ class Optical(Model):
 		return change
 	
 	def del_excitation_density(self):
-		
-		pass
+		change = np.abs(self.transverse_forward[0])**2 + \
+			np.abs(self.transverse_backward[0])**2 - \
+			self.excitation_density
+		change += self.diffusion_distance**2 * self.laplace(self.excitation_density)
+		return change / self.relaxation_time
 	
 	def plot_fields(self, ax, rng=range(0,1)):
 		modulus_forward = np.abs(self.transverse_forward)

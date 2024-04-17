@@ -29,6 +29,8 @@ class Model:
 		# A dictionary of the values, and their corresponding step functions.
 		# The key is a string, the value is (np.ndarray, function)
 		self.values = {}
+		
+		self.clip = True
 		pass
 	
 	def take_step(self, num=1):
@@ -44,9 +46,10 @@ class Model:
 				substance,func = self.values[k]
 				substance += deltas[k]
 				# Clip to [0,1]
-				np.clip(substance, a_min=0.0, a_max=1.0)
+				if self.clip:
+					np.clip(substance, a_min=0.0, a_max=1.0)
 				# Round zeros down.
-				substance[substance < self.zero_tol] = 0.0
+				substance[np.abs(substance) < self.zero_tol] = 0.0
 				self.values[k] = (substance,func)
 
 		self.curr_step+=num
