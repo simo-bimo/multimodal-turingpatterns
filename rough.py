@@ -8,7 +8,7 @@ from grayscott import GrayScott
 from optical import Optical
 
 system = Optical(dx=0.1, dy=0.1, #  bottom_left=(-1,-1), top_right=(1,1), 
-				dz=0.1, d=10, chi=-1)
+				dz=0.5, d=10, chi=-1)
 # system.set_activator(np.ones((system.x_count, system.y_count)) * 1.0)
 # system.activator = np.random.rand(system.x_count, system.y_count) * 0.5
 # system.inhibitor = np.random.rand(system.x_count, system.y_count) * 0.5
@@ -17,10 +17,12 @@ system = Optical(dx=0.1, dy=0.1, #  bottom_left=(-1,-1), top_right=(1,1),
 x = system.x
 y = system.y
 
+system.clip = False
+
 ## Animate Settings
-plotee = np.abs(system.transverse_backward[0])
+plotee = system.transverse_backward[0].real
 rng = (0, 1)
-name = "optical/1_backward_field"
+name = "optical/2_backward_real_oscillating_input"
 
 # fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(nrows=2, ncols=2, figsize=(20,12))
 fig, ax = plt.subplots()
@@ -53,10 +55,10 @@ def init():
     # return quad1,quad2,quad3,quad4
 
 def animate(i):
-    system.take_step(100)
+    system.take_step(1)
     fig.suptitle(f"Meshwork Pattern: {system.curr_step}")
 
-    quad.set_array(plotee.ravel())
+    quad.set_array(system.transverse_backward[0].real.ravel())
     return quad,
     #     quad1.set_array(system.activator.ravel())
     #     quad2.set_array(system.inhibitor.ravel())
@@ -64,7 +66,7 @@ def animate(i):
     #     quad4.set_array(system.differentiation.ravel())
     # return quad1,quad2,quad3,quad4
 
-anim = FuncAnimation(fig, animate, init_func=init, frames=50)
+anim = FuncAnimation(fig, animate, init_func=init, frames=500)
 
 anim.save('animations/'+name+'.gif', writer='pillow', fps=30)
 # plt.show()

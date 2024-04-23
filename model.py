@@ -1,5 +1,6 @@
 import numpy as np
 from scipy import ndimage
+import pickle
 
 class Model:
 	def __init__(self, dx=0.04, dy=0.04, dt=0.1, bottom_left=(-5,-5), top_right=(5,5)):
@@ -47,7 +48,12 @@ class Model:
 				substance += deltas[k]
 				# Clip to [0,1]
 				if self.clip:
-					np.clip(substance, a_min=0.0, a_max=1.0)
+					if np.iscomplexobj(substance):
+						np.clip(substance.real, a_min=0.0, a_max=1.0, out=substance.real)
+						np.clip(substance.imag, a_min=0.0, a_max=1.0, out=substance.imag)
+					else:
+						np.clip(substance, a_min=0.0, a_max=1.0)
+						
 				# Round zeros down.
 				substance[np.abs(substance) < self.zero_tol] = 0.0
 				self.values[k] = (substance,func)
@@ -79,3 +85,27 @@ class Model:
 		x_vals, y_vals = np.meshgrid(x,y, **kwargs)
 
 		return x_vals, y_vals, x_num, y_num
+	
+	def to_archive(model, filename: str, frames=1, steps_per_frame=1):
+		"""
+		Saves result of simulation with frames frames into filename.dat.
+		"""
+		with open(filename+".dat", 'wb') as handle:
+			for curr_frame in range(0, frames):
+				vals = {}
+				for k in model.values:
+					vals[k] = model.values[k][0]
+				pickle.dump(vals, handle, protocol=pickle.HIGHEST_PROTOCOL)
+				model.take_step(steps_per_frame)
+			vals = {}
+			for k in model.values:
+				vals[k] = model.values[k][0]
+			pickle.dump(vals, handle, protocol=pickle.HIGHEST_PROTOCOL)
+		pass
+	
+	def from_file(filename):
+		"""
+		Yields the values function of each frame with each call.
+		"""
+		with open(filename+".dat", "rb") as handle:
+			yield pickle.load(handle)
