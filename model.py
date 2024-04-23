@@ -91,10 +91,15 @@ class Model:
 		Saves result of simulation with frames frames into filename.dat.
 		"""
 		with open(filename+".dat", 'wb') as handle:
+			# Write the x and y first so plotting can use them
+			pickle.dump(model.x, handle, protocol=pickle.HIGHEST_PROTOCOL)
+			pickle.dump(model.y, handle, protocol=pickle.HIGHEST_PROTOCOL)
+			
 			for curr_frame in range(0, frames):
 				vals = {}
 				for k in model.values:
 					vals[k] = model.values[k][0]
+				pickle.dump(vals, handle, protocol=pickle.HIGHEST_PROTOCOL)
 				pickle.dump(vals, handle, protocol=pickle.HIGHEST_PROTOCOL)
 				model.take_step(steps_per_frame)
 			vals = {}
@@ -106,6 +111,11 @@ class Model:
 	def from_file(filename):
 		"""
 		Yields the values function of each frame with each call.
+		The first two values are the x, and then y coordinates.
 		"""
-		with open(filename+".dat", "rb") as handle:
-			yield pickle.load(handle)
+		handle = open(filename+".dat", "rb")
+		value = pickle.load(handle)
+		while not value is None:
+			yield value
+			value = pickle.load(handle)
+		handle.close()

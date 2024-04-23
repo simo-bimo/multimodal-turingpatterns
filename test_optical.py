@@ -1,22 +1,14 @@
 from optical import Optical
 from model import Model
-import matplotlib.pyplot as plt
 
-# import pdb
-# pdb.set_trace()
+model = Optical(dx=0.05, dy=0.05, #  bottom_left=(-1,-1), top_right=(1,1), 
+				dz=1.0, d=10, chi=-1, k = 0.5)
+model.clip = False
 
-# model = Optical(dx=0.05, dy=0.05, #  bottom_left=(-1,-1), top_right=(1,1), 
-# 				dz=1.0, d=10, chi=-1, k = 0.5)
-# model.clip = False
-# model.passover_fields()
-# model.debug_take_step(num=20)
+Model.to_archive(model, "data/optical_1", frames=500, steps_per_frame=10)
 
-# model.take_step(num=11)
-
-# Model.to_archive(model, "data/optical_1", frames=50, steps_per_frame=10)
-
-data = Model.from_file("data/optical_1.dat")
-print(data[0])
+# data = Model.from_file("data/optical_1.dat")
+# print(data[0])
 
 # fig, ((ax1, ax2)) = plt.subplots(nrows=1, ncols=2, figsize=(10,6))
 # fig.suptitle(f"Optical Model: {model.curr_step}")
