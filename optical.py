@@ -4,7 +4,10 @@ import matplotlib.pyplot as plt
 
 
 class Optical(Model):
-	def __init__(self, d=1.0, dz=0.04, chi=-0.9, R=0.9, l_d=1.0, tau=1.0, k=0.05, **kwargs):
+	def __init__(self, d=1.0, dz=0.04, chi=0.9, R=0.9, l_d=1.0, tau=1.0, k=1, **kwargs):
+		"""
+		Creates and Optical model based on Huang et McDonald (2005).
+		"""
 		super().__init__(**kwargs)
 		self.cavity_distance = d
 		self.dz = dz
@@ -21,8 +24,10 @@ class Optical(Model):
 		self.transverse_backward = np.zeros((self.num_z, self.x_count, self.y_count), dtype=np.cdouble)
 		
 		self.input_freq = k
-		self.input_laser = lambda x: np.exp(2*np.pi * x * self.input_freq / self.dt * 1j) * np.exp(-(self.x**2 + self.y**2))
-		self.transverse_forward[0] += self.input_laser(0)
+		# the derivative of the laser oscillation.
+		self.d_input_laser = lambda x: -2*np.pi*self.input_freq*np.sin(2*np.pi * x * self.input_freq)\
+			* np.exp(-(self.x**2 + self.y**2))
+		self.transverse_forward[0] += np.exp(-(self.x**2 + self.y**2))
   
 		self.values = {
 			"forward field": (self.transverse_forward, self.del_transverse_forward),
@@ -30,17 +35,7 @@ class Optical(Model):
 			"excitation density": (self.excitation_density, self.del_excitation_density),
 		}
 		pass
-	
-	def passover_fields(self):
-		for i in range(1, self.num_z):
-			self.transverse_forward[i] += 1j * self.kerr_effect * self.excitation_density * self.transverse_forward[i-1] * self.dz
-		
-		self.transverse_backward[self.num_z-1] = self.reflectivity * self.transverse_forward[self.num_z-1]
-		
-		for i in range(self.num_z-1, 0, -1):
-			self.transverse_backward[i] += -1j * self.kerr_effect * self.excitation_density * self.transverse_backward[i-1] * self.dz
-		
-		pass
+
 	
 	def debug_take_step(self, num=1):
 		# print max value. with each step we should see the value move through the list.
@@ -54,12 +49,15 @@ class Optical(Model):
 		pass
 		
 	def del_transverse_forward(self):
+		"""
+		Function that shifts the forwards field one step and bounces it back.
+		"""
 		change = 1j * self.kerr_effect * \
 			np.tile(self.excitation_density, (self.num_z, 1, 1)) * \
 			np.roll(self.transverse_forward, 1, 0) * self.dz
 		
-		# don't change initial condition (assume laser is giving constant output:
-		change[0] = self.input_laser(self.curr_step) - self.transverse_forward[0]
+		# change initial condition based on laser
+		change[0] = self.d_input_laser(self.curr_step) #- self.transverse_forward[0]
 		return change
 	
 	def del_transverse_backward(self):
@@ -78,6 +76,9 @@ class Optical(Model):
 		return change / self.relaxation_time
 	
 	def plot_fields(self, ax, rng=range(0,1)):
+		"""
+		Plots the forwards and backwards fields as quiver plots.
+		"""
 		modulus_forward = np.abs(self.transverse_forward)
 		modulus_backward = np.abs(self.transverse_backward)
 		for i in rng:

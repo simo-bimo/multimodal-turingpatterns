@@ -32,6 +32,8 @@ class Model:
 		self.values = {}
 		
 		self.clip = True
+		self.clip_min=0.0
+		self.clip_max=1.0
 		pass
 	
 	def take_step(self, num=1):
@@ -49,10 +51,10 @@ class Model:
 				# Clip to [0,1]
 				if self.clip:
 					if np.iscomplexobj(substance):
-						np.clip(substance.real, a_min=0.0, a_max=1.0, out=substance.real)
-						np.clip(substance.imag, a_min=0.0, a_max=1.0, out=substance.imag)
+						np.clip(substance.real, a_min=self.clip_min, a_max=self.clip_max, out=substance.real)
+						np.clip(substance.imag, a_min=self.clip_min, a_max=self.clip_max, out=substance.imag)
 					else:
-						np.clip(substance, a_min=0.0, a_max=1.0)
+						np.clip(substance, a_min=self.clip_min, a_max=self.clip_max)
 						
 				# Round zeros down.
 				substance[np.abs(substance) < self.zero_tol] = 0.0

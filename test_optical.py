@@ -2,10 +2,10 @@ from optical import Optical
 from model import Model
 
 model = Optical(dx=0.05, dy=0.05, #  bottom_left=(-1,-1), top_right=(1,1), 
-				dz=1.0, d=10, chi=-1, k = 0.5)
-model.clip = False
+				dz=1.0, d=10, chi=1, k = 0.05)
+# model.clip = False
 
-Model.to_archive(model, "data/optical_2", frames=50, steps_per_frame=10)
+Model.to_file(model, "data/optical_2_clip", frames=1000, steps_per_frame=1)
 
 # data = Model.from_file("data/optical_1.dat")
 # print(data[0])
