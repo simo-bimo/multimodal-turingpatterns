@@ -7,9 +7,9 @@ from model import Model
 
 
 ## Animate Settings
-name = "optical/from_data_2"
+name = "optical/from_data_2_forward"
 source = "data/optical_1"
-to_plot = "backward field"
+to_plot = "forward field"
 
 data = Model.from_file(source)
 
@@ -17,14 +17,14 @@ x = next(data)
 y = next(data)
 
 fig, ax = plt.subplots()
-fig.suptitle(f"Backward Field: 0")
+fig.suptitle(f"Forward Field: 0")
 
 
 quad = ax.pcolormesh(x, y, np.real(next(data)[to_plot][0]))
 cb = plt.colorbar(quad)
 
 def animate(i):
-    fig.suptitle(f"Backward Field: {i}")
+    fig.suptitle(f"Forward Field: {i}")
 
     quad.set_array(np.real(next(data)[to_plot][0]))
     return quad,

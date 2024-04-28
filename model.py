@@ -86,7 +86,7 @@ class Model:
 
 		return x_vals, y_vals, x_num, y_num
 	
-	def to_archive(model, filename: str, frames=1, steps_per_frame=1):
+	def to_file(model, filename: str, frames=1, steps_per_frame=1):
 		"""
 		Saves result of simulation with frames frames into filename.dat.
 		"""
