@@ -14,13 +14,7 @@ class VariedGS(GrayScott):
 		# point to interpolate between, given as (kill, feed)
 		self.left_point = (0.06101, 0.06265)
 		self.right_point = (0.06454, 0.05923)
-		
-		self.param_scale = 5
-		param_bot_left = (self.bottom_left[0]/self.param_scale, self.bottom_left[1]/self.param_scale)
-		param_top_right = (self.top_right[0]/self.param_scale, self.top_right[1]/self.param_scale)
-		self.parameter_model = GrayScott(bottom_left=param_bot_left, top_right=param_top_right)
-
-		
+			
 		# Model both of the Inhibitor of the pre-computed model
 		self.feed = self.new_data['Inhibitor']
 		self.kill = self.new_data['Inhibitor']

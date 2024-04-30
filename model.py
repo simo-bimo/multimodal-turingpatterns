@@ -59,7 +59,7 @@ class Model:
 						np.clip(substance.real, a_min=self.clip_min, a_max=self.clip_max, out=substance.real)
 						np.clip(substance.imag, a_min=self.clip_min, a_max=self.clip_max, out=substance.imag)
 					else:
-						np.clip(substance, a_min=self.clip_min, a_max=self.clip_max)
+						np.clip(substance, a_min=self.clip_min, a_max=self.clip_max, out=substance)
 						
 				# Round zeros down.
 				if np.iscomplexobj(substance):
