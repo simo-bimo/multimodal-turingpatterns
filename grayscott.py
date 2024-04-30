@@ -2,16 +2,19 @@ import numpy as np
 from model import Model
 
 class GrayScott(Model):
-	def __init__(self, feed=0.055, decay=0.062, **kwargs):
+	def __init__(self, feed=0.055, decay=0.062, 
+			  activator_diffusion=1.0, 
+			  inhibitor_diffusion=0.5, 
+			  **kwargs):
 		super().__init__(**kwargs)
 
 		self.feed = feed
 		self.decay = decay
 		
 		# Parameters for inhibitor
-		self.Da = 1
+		self.Da = activator_diffusion
 		# Parameters for activator
-		self.Dh = 0.5
+		self.Dh = inhibitor_diffusion
 		
 		# Initialise to zeros
 		self.set_activator(np.zeros((self.x_count, self.y_count)))

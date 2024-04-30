@@ -3,10 +3,13 @@ from scipy import ndimage
 import pickle
 
 class Model:
-	def __init__(self, dx=0.04, dy=0.04, dt=0.1, bottom_left=(-5,-5), top_right=(5,5)):
+	def __init__(self, dx=0.04, dy=0.04, dt=0.1, bottom_left=(-5,-5), top_right=(5,5), grid_vals=None):
 		# General Params
 		self.dx=dx
 		self.dy=dy
+		
+		self.bottom_left=bottom_left
+		self.top_right=top_right
 		
 		# Parameters for Simulation
 		self.dt = dt
@@ -15,9 +18,12 @@ class Model:
 		# Two grids, one with a set of x coordinates, 
 		# one with a set of y coordinates.
 		# The next two values are just the number of points.
-		self.x, self.y, self.x_count, self.y_count = Model.generate_grid(dx=self.dx, dy=self.dy,\
-															 bottom_left=bottom_left, top_right=top_right)
-
+		if grid_vals==None:
+			self.x, self.y, self.x_count, self.y_count = Model.generate_grid(dx=self.dx, dy=self.dy,\
+																bottom_left=bottom_left, top_right=top_right)
+		else:
+			self.x, self.y, self.x_count, self.y_count = grid_vals
+		
 		# Every model needs a laplacian for diffusion.
 		# stencil = np.array([[0, 1, 0],[1, -4, 1], [0, 1, 0]])
 		stencil = np.array([[0.05, 0.2, 0.05],[0.2, -1, 0.2], [0.05, 0.2, 0.05]])
@@ -57,7 +63,10 @@ class Model:
 						np.clip(substance, a_min=self.clip_min, a_max=self.clip_max)
 						
 				# Round zeros down.
-				substance[np.abs(substance) < self.zero_tol] = 0.0
+				if np.iscomplexobj(substance):
+					substance[np.abs(substance) < self.zero_tol] = 0.0
+				else:
+					substance[substance < self.zero_tol] = 0.0
 				self.values[k] = (substance,func)
 
 		self.curr_step+=num
