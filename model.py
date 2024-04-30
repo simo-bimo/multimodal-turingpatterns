@@ -2,6 +2,9 @@ import numpy as np
 from scipy import ndimage
 import pickle
 
+import matplotlib.pyplot as plt
+from matplotlib.animation import FuncAnimation
+
 class Model:
 	def __init__(self, dx=0.04, dy=0.04, dt=0.1, bottom_left=(-5,-5), top_right=(5,5), grid_vals=None):
 		# General Params
@@ -130,3 +133,35 @@ class Model:
 			yield value
 			value = pickle.load(handle)
 		handle.close()
+		
+	def create_animation(name, source, to_plot, frame_count=1000, frame_skip=20, plot_func = lambda x: x):
+		"""
+		Creates an animation saved in 'name.gif' from the model source 'source.dat',
+		plotting the value 'to_plot'. 
+		plot_func is a func that is applied to the plotted value to make it palatable.
+		i.e. np.real().
+		frame_skip is the number of frames to label as skipped in the title. This doesn't
+		affect how many frames are actually rendered at all.
+		"""
+		print(f"Beginning animation '{name}' from '{source}.dat'")
+		data = Model.from_file(source)
+		x = next(data)
+		y = next(data)
+
+		fig, ax = plt.subplots()
+		fig.suptitle(f"{to_plot}: 0")
+
+
+		quad = ax.pcolormesh(x, y, plot_func(next(data)[to_plot]))
+		cb = plt.colorbar(quad)
+
+		def animate(i):
+			fig.suptitle(f"{to_plot}: {i*frame_skip}")
+			quad.set_array(plot_func(next(data)[to_plot]))
+			return quad,
+
+		anim = FuncAnimation(fig, animate, frames=frame_count)
+
+		anim.save('animations/'+name+'.gif', writer='pillow', fps=30)
+		print("Saved animation: " + name)
+		pass
