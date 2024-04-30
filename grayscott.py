@@ -33,14 +33,14 @@ class GrayScott(Model):
 		H = self.inhibitor
 		
 		return (self.feed*(np.ones((self.x_count, self.y_count))-A)\
-				- A * np.power(H, 2)\
+				- 0.5 * A * np.power(H, 2)\
 				+ self.Da*self.laplace(A))
 	
 	def deltaH(self):
 		A = self.activator
 		H = self.inhibitor
 		
-		return (A * np.power(H, 2)\
+		return (0.5* A * np.power(H, 2)\
 				- (self.feed + self.decay)*H\
 				+ self.Dh*self.laplace(H))
 	
