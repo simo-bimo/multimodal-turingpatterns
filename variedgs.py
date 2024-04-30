@@ -12,12 +12,11 @@ class VariedGS(GrayScott):
 		super().__init__(**kwargs)
 		
 		# point to interpolate between, given as (kill, feed)
-		self.left_point = (0.06101, 0.06265)
-		self.right_point = (0.06454, 0.05923)
-			
-		# Model both of the Inhibitor of the pre-computed model
-		self.feed = self.new_data['Inhibitor']
-		self.kill = self.new_data['Inhibitor']
+		self.left_point = (0.06229, 0.03657)
+		self.right_point = (0.06033, 0.02696)
+		# Model both of them based on a clipped function.
+		self.feed = np.clip((self.x+5)/10, a_min=0.0, a_max=1.0)
+		self.kill = np.clip((self.x+5)/10, a_min=0.0, a_max=1.0)
 		
 		self.values["Feed"] = (self.feed, self.delta_feed)
 		self.values["Kill"] = (self.kill, self.delta_kill)
@@ -69,4 +68,4 @@ class VariedGS(GrayScott):
 		Returns a new array, ranging from left to right.
 		"""
 		
-		return left*np.ones(array.shape()) + (right-left)*array
+		return left*np.ones(array.shape) + (right-left)*array
