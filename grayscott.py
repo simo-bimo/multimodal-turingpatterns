@@ -11,18 +11,11 @@ class GrayScott(Model):
 		self.feed = feed
 		self.decay = decay
 		
-		# Parameters for inhibitor
 		self.Da = activator_diffusion
-		# Parameters for activator
 		self.Dh = inhibitor_diffusion
 		
-		# Initialise to zeros
 		self.set_activator(np.zeros((self.x_count, self.y_count)))
 		self.set_inhibitor(np.zeros((self.x_count, self.y_count)))
-		
-		# Initialise all values to random variables to begin.
-		# self.activator += np.random.rand(self.x_count, self.y_count) * 0
-		# self.inhibitor += np.random.rand(self.x_count, self.y_count) * 0
 		pass
 	
 	def set_activator(self, value):
@@ -51,24 +44,6 @@ class GrayScott(Model):
 				- (self.feed + self.decay)*H\
 				+ self.Dh*self.laplace(H))
 	
-	# def take_step(self, num=1):
-	# 	for i in range(0, num):
-	# 		delA = self.deltaA() * self.dt
-	# 		delH = self.deltaH() * self.dt
-
-	# 		self.activator += delA
-	# 		self.inhibitor += delH
-
-	# 		np.clip(self.activator, a_min=0.0, a_max=1.0)
-	# 		np.clip(self.inhibitor, a_min=0.0, a_max=1.0)
-
-	# 		# clip values near zero to zero.
-	# 		self.activator[self.activator < self.zero_tol] = 0.0
-	# 		self.inhibitor[self.inhibitor < self.zero_tol] = 0.0
-
-	# 	self.curr_step+=num
-	# 	pass
-
 	def add_activator(self, p = (0.0, 0.0), r = 1.0, amount = 1.0):
 		"""
 		Adds a circle of activation, by default in the middle.

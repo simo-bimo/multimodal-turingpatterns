@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 
 class Model:
-	def __init__(self, dx=0.04, dy=0.04, dt=0.1, bottom_left=(-5,-5), top_right=(5,5), grid_vals=None):
+	def __init__(self, dx=0.04, dy=0.04, dt=0.1, bottom_left=(-5,-5), top_right=(5,5)):
 		# General Params
 		self.dx=dx
 		self.dy=dy
@@ -14,18 +14,14 @@ class Model:
 		self.bottom_left=bottom_left
 		self.top_right=top_right
 		
-		# Parameters for Simulation
 		self.dt = dt
 		self.curr_step = 0
 		
 		# Two grids, one with a set of x coordinates, 
 		# one with a set of y coordinates.
 		# The next two values are just the number of points.
-		if grid_vals==None:
-			self.x, self.y, self.x_count, self.y_count = Model.generate_grid(dx=self.dx, dy=self.dy,\
+		self.x, self.y, self.x_count, self.y_count = Model.generate_grid(dx=self.dx, dy=self.dy,\
 																bottom_left=bottom_left, top_right=top_right)
-		else:
-			self.x, self.y, self.x_count, self.y_count = grid_vals
 		
 		# Every model needs a laplacian for diffusion.
 		# stencil = np.array([[0, 1, 0],[1, -4, 1], [0, 1, 0]])
