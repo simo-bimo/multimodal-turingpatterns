@@ -5,6 +5,7 @@ class GrayScott(Model):
 	def __init__(self, feed=0.055, decay=0.062, 
 			  activator_diffusion=1.0, 
 			  inhibitor_diffusion=0.5, 
+			  diffusion_extra=1,
 			  **kwargs):
 		super().__init__(**kwargs)
 
@@ -13,6 +14,9 @@ class GrayScott(Model):
 		
 		self.Da = activator_diffusion
 		self.Dh = inhibitor_diffusion
+		
+		# number of diffusion frames to run before also doing the reaction
+		self.diffusion_extra = diffusion_extra
 		
 		self.set_activator(np.zeros((self.x_count, self.y_count)))
 		self.set_inhibitor(np.zeros((self.x_count, self.y_count)))
@@ -31,18 +35,20 @@ class GrayScott(Model):
 	def deltaA(self):
 		A = self.activator
 		H = self.inhibitor
-		
-		return (self.feed*(np.ones((self.x_count, self.y_count))-A)\
-				- A * np.power(H, 2)\
-				+ self.Da*self.laplace(A))
+		if (self.curr_step % self.diffusion_extra == 0):
+			return (self.feed*(np.ones((self.x_count, self.y_count))-A)\
+					- A * np.power(H, 2)\
+					+ self.Da*self.laplace(A))
+		return self.Dh*self.laplace(H)
 	
 	def deltaH(self):
 		A = self.activator
 		H = self.inhibitor
-		
-		return (A * np.power(H, 2)\
-				- (self.feed + self.decay)*H\
-				+ self.Dh*self.laplace(H))
+		if (self.curr_step % self.diffusion_extra == 0):
+			return (A * np.power(H, 2)\
+					- (self.feed + self.decay)*H\
+					+ self.Dh*self.laplace(H))
+		return self.Dh*self.laplace(H)
 	
 	def add_activator(self, p = (0.0, 0.0), r = 1.0, amount = 1.0):
 		"""

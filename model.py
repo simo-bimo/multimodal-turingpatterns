@@ -67,8 +67,8 @@ class Model:
 				else:
 					substance[substance < self.zero_tol] = 0.0
 				self.values[k] = (substance,func)
+			self.curr_step+=1
 
-		self.curr_step+=num
 		pass
 	
 	def generate_grid(dx=1, dy=1, bottom_left=(-5,-5), top_right=(5,5), **kwargs):
