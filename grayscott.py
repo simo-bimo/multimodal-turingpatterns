@@ -39,7 +39,7 @@ class GrayScott(Model):
 			return (self.feed*(np.ones((self.x_count, self.y_count))-A)\
 					- A * np.power(H, 2)\
 					+ self.Da*self.laplace(A))
-		return self.Dh*self.laplace(H)
+		return self.Da*self.laplace(A)
 	
 	def deltaH(self):
 		A = self.activator

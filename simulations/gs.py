@@ -49,8 +49,9 @@ Version two makes an edit so the reaction rate terms (AH**2) are scaled aswell.
 
 # Model.create_animation("grayscott/gs_shrink_other_params2", "data/gs_shrink_other_params2", "Inhibitor")
 '''
-Attempt to generate bigger scale/longer wavelength by skipping over grayscott
-Requirs a change to the grayscott.py file.
+Attempt to generate bigger scale/longer wavelength by skipping over grayscott reaction for extra diffusion.
+Required a change to the grayscott.py file.
+The second sim doubled the feed and decay values aswell.
 '''
 gs = GrayScott(diffusion_extra=2, dt=1.0, bottom_left=(-2,-2), top_right=(2,2))
 gs.set_activator(np.ones((gs.x_count, gs.y_count)))
@@ -58,3 +59,15 @@ gs.add_inhibitor(r=0.4, amount=1.0)
 Model.to_file(gs, "data/gs_skip_react_extra_laplace", frames=1000, steps_per_frame=20)
 
 Model.create_animation("grayscott/gs_skip_react_extra_laplace", "data/gs_skip_react_extra_laplace", "Inhibitor")
+
+# '''
+# Same as above but also with the feed kill parts ocurring during skipped steps. 
+# i.e. only the AH^2 part is ignored every 2 steps.
+# Requiree some changes to grayscott.py.
+# '''
+# gs = GrayScott(diffusion_extra=2, dt=1.0, bottom_left=(-2,-2), top_right=(2,2))
+# gs.set_activator(np.ones((gs.x_count, gs.y_count)))
+# gs.add_inhibitor(r=0.4, amount=1.0)
+# Model.to_file(gs, "data/gs_skip_react_extra_laplace_2", frames=1000, steps_per_frame=20)
+
+# Model.create_animation("grayscott/gs_skip_react_extra_laplace_2", "data/gs_skip_react_extra_laplace_2", "Inhibitor")
