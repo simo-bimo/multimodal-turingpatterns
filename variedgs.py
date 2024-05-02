@@ -8,15 +8,23 @@ class VariedGS(GrayScott):
 	A version of the GrayScott Model which reads it's parameters in from a grid.
 	i.e., each parameter can itself be varied with time. (From another model say)
 	"""
-	def __init__(self, source="data/gs.dat", **kwargs):
+	def __init__(self, 
+			  source="data/gs", 
+			  left=(0.06229, 0.03657), 
+			  right=(0.06033, 0.02696), 
+			  **kwargs):
 		super().__init__(**kwargs)
 		
 		# point to interpolate between, given as (kill, feed)
-		self.left_point = (0.06229, 0.03657)
-		self.right_point = (0.06033, 0.02696)
-		# Model both of them based on a clipped function.
-		self.feed = np.clip((self.x+5)/10, a_min=0.0, a_max=1.0)
-		self.kill = np.clip((self.x+5)/10, a_min=0.0, a_max=1.0)
+		self.left_point = left
+		self.right_point = right
+		
+		# Model both of them based on the final state of a pre-computed model.
+		data = Model.get_last(source)
+		if (data['Inhibitor'].shape != self.x.shape):
+			raise ValueError("Given model is of incorrect shape.")
+		self.feed = data['Inhibitor']
+		self.kill = data['Inhibitor']
 		
 		self.values["Feed"] = (self.feed, self.delta_feed)
 		self.values["Kill"] = (self.kill, self.delta_kill)

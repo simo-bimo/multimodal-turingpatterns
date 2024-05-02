@@ -124,7 +124,6 @@ class Model:
 		The first two values are the x, and then y coordinates.
 		"""
 		handle = open(filename+".dat", "rb")
-		value = pickle.load(handle)
 		while True:
 			try:
 				value = pickle.load(handle)
