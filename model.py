@@ -125,10 +125,15 @@ class Model:
 		"""
 		handle = open(filename+".dat", "rb")
 		value = pickle.load(handle)
-		while not value is None:
+		while True:
+			try:
+				value = pickle.load(handle)
+			except EOFError:
+				break
 			yield value
-			value = pickle.load(handle)
 		handle.close()
+		pass
+			
 		
 	def create_animation(name, source, to_plot, frame_count=1000, frame_skip=20, plot_func = lambda x: x):
 		"""
@@ -161,3 +166,14 @@ class Model:
 		anim.save('animations/'+name+'.gif', writer='pillow', fps=30)
 		print("Saved animation: " + name)
 		pass
+	
+	def get_last(source):
+		"""
+		Gets the last frame stored in a serialised model.
+		"""
+		generator = Model.from_file(source)
+		last = None
+		for curr in generator:
+			last = curr
+		return last
+		

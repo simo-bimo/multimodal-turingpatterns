@@ -58,7 +58,7 @@ gs.set_activator(np.ones((gs.x_count, gs.y_count)))
 gs.add_inhibitor(r=0.4, amount=1.0)
 Model.to_file(gs, "data/gs_large_scale2", frames=1500, steps_per_frame=200)
 
-Model.create_animation("grayscott/gs_large_scale2", "data/gs_large_scale2", "Inhibitor")
+
 
 # '''
 # Same as above but also with the feed kill parts ocurring during skipped steps. 
