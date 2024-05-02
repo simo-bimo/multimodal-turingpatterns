@@ -53,12 +53,12 @@ Attempt to generate bigger scale/longer wavelength by skipping over grayscott re
 Required a change to the grayscott.py file.
 The second sim doubled the feed and decay values aswell.
 '''
-gs = GrayScott(diffusion_extra=2, dt=1.0, bottom_left=(-2,-2), top_right=(2,2))
+gs = GrayScott(diffusion_extra=10, dt=1.0, bottom_left=(-10,-10), top_right=(10,10))
 gs.set_activator(np.ones((gs.x_count, gs.y_count)))
 gs.add_inhibitor(r=0.4, amount=1.0)
-Model.to_file(gs, "data/gs_skip_react_extra_laplace", frames=1000, steps_per_frame=20)
+Model.to_file(gs, "data/gs_large_scale2", frames=1500, steps_per_frame=200)
 
-Model.create_animation("grayscott/gs_skip_react_extra_laplace", "data/gs_skip_react_extra_laplace", "Inhibitor")
+Model.create_animation("grayscott/gs_large_scale2", "data/gs_large_scale2", "Inhibitor")
 
 # '''
 # Same as above but also with the feed kill parts ocurring during skipped steps. 
