@@ -25,8 +25,8 @@ First test from a source model.
 Second go with slightly different scales, making the smaller one even smaller so the pattern is clearer.
 """
 variedgs = VariedGS(source="data/gs_large_scale2", 
-					left=(0.06332, 0.04188),
-					right=(0.05784, 0.01876),
+					# left=(0.06332, 0.04188),
+					# right=(0.05784, 0.01876),
 					activator_diffusion=0.5, 
 					inhibitor_diffusion=0.25, 
 					dt=1.0, 
@@ -39,4 +39,4 @@ variedgs.add_inhibitor(r=0.5, amount=1.0)
 Model.to_file(variedgs, "data/variedgs-nested2", frames=2600, steps_per_frame=100)
 
 # Ran this line in parallel to above.
-# Model.create_animation("variedgs/nested2", "data/variedgs-nested2", "Inhibitor", frame_count=2600, frame_skip=100)
+# Model.create_animation('variedgs/nested2', 'data/variedgs-nested2', 'Inhibitor', frame_count=2600, frame_skip=100)

@@ -41,6 +41,44 @@ class Model:
 		self.clip_max=1.0
 		pass
 	
+	def take_step_opt(self, num=1):
+		"""
+		An optimised version of take-step that uses maps instead of for loops on values.
+		UNTESTED
+		"""
+		for i in range(0, num):
+			def calc_delt(k,v):
+				return v[1]() * self.dt
+			
+			deltas = map(calc_delt, self.values.items())
+			
+			if self.clip:
+				def update(k,v,d):
+					sub = v[0]
+					sub += d
+					if np.iscomplexobj(sub):
+						np.clip(sub.real, a_min=self.clip_min, a_max=self.clip_max, out=sub.real)
+						np.clip(sub.imag, a_min=self.clip_min, a_max=self.clip_max, out=sub.imag)
+						# rounds down zeros
+						sub[np.abs(sub) < self.zero_tol] = 0.0
+					else:
+						np.clip(sub, a_min=self.clip_min, a_max=self.clip_max, out=sub)
+						sub[sub < self.zero_tol] = 0.0
+					return k,(sub, v[1])
+			else: 
+				def update(k,v,d):
+					sub = v[0]
+					sub += d
+					if np.iscomplexobj(sub):
+						sub[np.abs(sub) < self.zero_tol] = 0.0
+					else:
+						sub[sub < self.zero_tol] = 0.0
+					return k,(sub, v[1])
+			
+			self.values = dict(map(update, zip(self.values.items(), deltas)))
+			
+			self.curr_step+=1
+	
 	def take_step(self, num=1):
 		for i in range(0, num):
 			deltas = {}
@@ -67,6 +105,7 @@ class Model:
 				else:
 					substance[substance < self.zero_tol] = 0.0
 				self.values[k] = (substance,func)
+			
 			self.curr_step+=1
 
 		pass
