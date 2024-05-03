@@ -11,7 +11,7 @@ class MappedGS(GrayScott):
 	@param mapping: a dictionary that maps a parameter name i.e 'feed' to a function to get the next feed.
 	@param update_func: an optional function that is called once per step (i.e. to take a step in another model)
 	"""
-	def __init__(self, mapping: dict, update_func=lambda x: None, **kwargs):
+	def __init__(self, mapping={}, update_func=lambda x: None, **kwargs):
 		super().__init__(**kwargs)
 		self.mapping = mapping
 		self.update_func = update_func
@@ -19,9 +19,9 @@ class MappedGS(GrayScott):
 		# If any values are not mapped, set a sensible default.
 		self.set_default('Feed', 			  	0.055*np.ones(self.x.shape))
 		self.set_default('Kill', 		 	  	0.062*np.ones(self.x.shape))
-		self.set_default('Activator Diffusion', 1.000*np.ones(self.x.shape))
-		self.set_default('Inhibitor Diffusion', 0.500*np.ones(self.x.shape))
-		self.set_default('Scale', 				1.000*np.ones(self.x.shape))
+		self.set_default('Activator Diffusion',   1.0*np.ones(self.x.shape))
+		self.set_default('Inhibitor Diffusion',   0.5*np.ones(self.x.shape))
+		self.set_default('Scale', 					  np.ones(self.x.shape))
 		
 		return
 	
@@ -39,7 +39,7 @@ class MappedGS(GrayScott):
 	
 	def take_step_opt(self, num=1):
 		for i in range(0, num):
-			self.update_func()
+			self.update_func(1)
 			super().take_step_opt(1)
 		return
 	
@@ -50,8 +50,8 @@ class MappedGS(GrayScott):
 		S = self.mapping['Scale']()
 		Da = self.mapping['Activator Diffusion']()
 		
-		return (F*(np.ones(self.x.shape)-A)/S\
-				- A * np.power(H, 2)/S\
+		return ((F*(np.ones(self.x.shape)-A)/S)\
+				- ((A * np.power(H, 2))/S)\
 				+ Da*self.laplace(A))
 	
 	def deltaH(self):

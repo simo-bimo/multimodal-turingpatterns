@@ -176,7 +176,7 @@ class Model:
 		pass
 			
 		
-	def create_animation(name, source, to_plot, frame_count=1000, frame_skip=20, plot_func = lambda x: x):
+	def create_animation(name: str, source: str, to_plot: str, frame_count=1000, frame_skip=20, plot_func = lambda x: x):
 		"""
 		Creates an animation saved in 'name.gif' from the model source 'source.dat',
 		plotting the value 'to_plot'. 
