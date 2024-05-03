@@ -44,7 +44,7 @@ class Model:
 	def take_step_opt(self, num=1):
 		"""
 		An optimised version of take-step that uses maps instead of for loops on values.
-		UNTESTED
+		TESTED - Correct but actually slower. May make a difference depnding
 		"""
 		for i in range(0, num):
 			def calc_delt(k,v):
@@ -173,7 +173,7 @@ class Model:
 				break
 			yield value
 		handle.close()
-		return {'Empty': 0.0}
+		pass
 			
 		
 	def create_animation(name, source, to_plot, frame_count=1000, frame_skip=20, plot_func = lambda x: x):
@@ -243,6 +243,11 @@ class Model:
 					print(f"Difference outside tolerance of: {np.max(difference)}")
 				count += 1
 			dicts = list(map(next, models))
+		
+		# Close remaining files.
+		for x in models:
+			[y for y in x]
+		
 		return count
 			
 		
