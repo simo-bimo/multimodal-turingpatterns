@@ -1,5 +1,5 @@
-from model import Model
-from grayscott import GrayScott
+from simulator.models import *
+
 import numpy as np
 
 """

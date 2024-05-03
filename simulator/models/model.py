@@ -50,7 +50,7 @@ class Model:
 			def calc_delt(k,v):
 				return v[1]() * self.dt
 			
-			deltas = map(calc_delt, self.values.items())
+			deltas = map(calc_delt, self.values.keys(), self.values.values())
 			
 			if self.clip:
 				def update(k,v,d):
@@ -75,7 +75,7 @@ class Model:
 						sub[sub < self.zero_tol] = 0.0
 					return k,(sub, v[1])
 			
-			self.values = dict(map(update, zip(self.values.items(), deltas)))
+			self.values = dict(map(update, self.values.keys(), self.values.values(), deltas))
 			
 			self.curr_step+=1
 	
@@ -135,7 +135,7 @@ class Model:
 
 		return x_vals, y_vals, x_num, y_num
 	
-	def to_file(model, filename: str, frames=1, steps_per_frame=1):
+	def to_file(model, filename: str, frames=1, steps_per_frame=1, optimised=False):
 		"""
 		Saves result of simulation with frames frames into filename.dat.
 		"""
@@ -150,7 +150,10 @@ class Model:
 					vals[k] = model.values[k][0]
 				pickle.dump(vals, handle, protocol=pickle.HIGHEST_PROTOCOL)
 				pickle.dump(vals, handle, protocol=pickle.HIGHEST_PROTOCOL)
-				model.take_step(steps_per_frame)
+				if optimised:
+					model.take_step_opt(steps_per_frame)
+				else:
+					model.take_step(steps_per_frame)
 			vals = {}
 			for k in model.values:
 				vals[k] = model.values[k][0]
@@ -170,7 +173,7 @@ class Model:
 				break
 			yield value
 		handle.close()
-		pass
+		return {'Empty': 0.0}
 			
 		
 	def create_animation(name, source, to_plot, frame_count=1000, frame_skip=20, plot_func = lambda x: x):
@@ -215,7 +218,7 @@ class Model:
 			last = curr
 		return last
 	
-	def compare_difference(sources: list[str], tolerance=1e-5):
+	def compare_difference(sources: list[str], tolerance=1e-5, do_print = False):
 		models = list(map(Model.from_file, sources))
 		
 		xs = list(map(next, models))
@@ -230,17 +233,17 @@ class Model:
 			raise ValueError(f"Some models have a different shape: {shape_comparisons}")
 		
 		dicts = list(map(next, models))
-		while True:
+		count = 0
+		while dicts:
 			vals = list(map(lambda x: list(x.values()), dicts))
-			print("VALS(0):", np.roll(vals, 0, -1), sep='\n')
-			print("VALS(1):", np.roll(vals, 1, -1), sep='\n')
-			difference = np.abs(np.roll(vals, 0) - np.roll(vals, 1))
-			difference[difference <= tolerance] = 0
-			if (np.max(difference)):
-				print(f"Difference outside tolerance of: {np.max(difference)}")
-				break
+			difference = np.abs(np.roll(vals, 0, 0) - np.roll(vals, 1, 0))
+			difference[difference <= tolerance] = 0.0
+			if (difference.max() > 0.0):
+				if do_print:
+					print(f"Difference outside tolerance of: {np.max(difference)}")
+				count += 1
 			dicts = list(map(next, models))
-		pass
+		return count
 			
 		
 		

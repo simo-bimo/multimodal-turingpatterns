@@ -1,5 +1,5 @@
 import numpy as np
-from model import Model
+from .model import Model
 
 class GrayScott(Model):
 	def __init__(self, feed=0.055, decay=0.062, 

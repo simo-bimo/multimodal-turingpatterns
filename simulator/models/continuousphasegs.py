@@ -1,6 +1,6 @@
-from model import Model
-from grayscott import GrayScott
-from variedgs import VariedGS
+from .model import Model
+from .grayscott import GrayScott
+from .variedgs import VariedGS
 
 import numpy as np
 

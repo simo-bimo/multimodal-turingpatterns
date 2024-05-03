@@ -1,7 +1,7 @@
 import numpy as np
 
-from grayscott import GrayScott
-from model import Model
+from .grayscott import GrayScott
+from .model import Model
 
 class VariedGS(GrayScott):
 	"""

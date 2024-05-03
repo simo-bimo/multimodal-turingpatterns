@@ -1,6 +1,6 @@
 import numpy as np
 import scipy
-from model import Model
+from .model import Model
 
 """
 This code is based on a model proposed in the following paper:
