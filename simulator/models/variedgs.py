@@ -7,6 +7,8 @@ class VariedGS(GrayScott):
 	"""
 	A version of the GrayScott Model which reads it's parameters in from a grid.
 	i.e., each parameter can itself be varied with time. (From another model say)
+	This takes a source file, and uses it to generate a pattern of phase transitions.
+	The source file is read statically from the last computer model - it does not evolve over time.
 	"""
 	def __init__(self, 
 			  source="data/gs", 
@@ -29,10 +31,6 @@ class VariedGS(GrayScott):
 		self.values["Feed"] = (self.feed, self.delta_feed)
 		self.values["Kill"] = (self.kill, self.delta_kill)
 		
-		pass
-	
-	def evolve_parameter_model(self):
-		scale_factor = 5
 		pass
 	
 	def deltaA(self):

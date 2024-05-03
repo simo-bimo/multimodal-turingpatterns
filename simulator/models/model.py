@@ -214,4 +214,33 @@ class Model:
 		for curr in generator:
 			last = curr
 		return last
+	
+	def compare_difference(sources: list[str], tolerance=1e-5):
+		models = list(map(Model.from_file, sources))
+		
+		xs = list(map(next, models))
+		ys = list(map(next, models))
+		
+		# verify identical shapes
+		shapes = list(map(lambda x: x.shape, xs))
+		# rolling by zero converts it to an ndarray 
+  		# so the comparison can take place
+		shape_comparisons = (np.roll(shapes,0) - np.roll(shapes, 1))
+		if (np.max(shape_comparisons)):
+			raise ValueError(f"Some models have a different shape: {shape_comparisons}")
+		
+		dicts = list(map(next, models))
+		while True:
+			vals = list(map(lambda x: list(x.values()), dicts))
+			print("VALS(0):", np.roll(vals, 0, -1), sep='\n')
+			print("VALS(1):", np.roll(vals, 1, -1), sep='\n')
+			difference = np.abs(np.roll(vals, 0) - np.roll(vals, 1))
+			difference[difference <= tolerance] = 0
+			if (np.max(difference)):
+				print(f"Difference outside tolerance of: {np.max(difference)}")
+				break
+			dicts = list(map(next, models))
+		pass
+			
+		
 		
