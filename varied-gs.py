@@ -85,15 +85,20 @@ n = 15
 stencil = np.ones((n,n))/(n*n)
 recovered_pattern = nested_pattern['Inhibitor']
 # recovered_pattern = ndimage.convolve(recovered_pattern, stencil, mode='wrap')
-# recovered_pattern = ndimage.gaussian_filter(recovered_pattern, 5.5, mode='wrap')
+recovered_pattern = ndimage.gaussian_filter(recovered_pattern, 5.5, mode='wrap')
 
-fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(10, 5))
+fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(10, 5), sharey=True)
 
 fig.suptitle("Original Pattern v Recovered Pattern")
 ax[0].pcolormesh(x,y,original_pattern['Inhibitor'])
 ax[0].set_title("Original Pattern")
-ax[1].pcolormesh(x,y,recovered_pattern)
+quad=ax[1].pcolormesh(x,y,recovered_pattern)
 ax[1].set_title("Recovered Pattern")
 
+
+ax[0].set_box_aspect(1.0)
+ax[1].set_box_aspect(1.0)
+
+cb = fig.colorbar(quad, ax=ax.ravel().tolist())
 plt.show()
-fig.savefig("plots/original_v_recovered.png")
+fig.savefig("plots/original_v_recovered_gauss.png")
