@@ -48,27 +48,27 @@ Second go with slightly different scales, making the smaller one even smaller so
 Third attempt, this time make the starting model even larger.
 """
 
-gs = GrayScott(diffusion_extra=40, 
-			   dt=1.0, 
-			   bottom_left=(-10,-10), 
-			   top_right=(10,10))
+# gs = GrayScott(diffusion_extra=40, 
+# 			   dt=1.0, 
+# 			   bottom_left=(-10,-10), 
+# 			   top_right=(10,10))
 
-gs.set_activator(np.ones((gs.x_count, gs.y_count)))
-gs.add_inhibitor(r=0.4, amount=1.0)
+# gs.set_activator(np.ones((gs.x_count, gs.y_count)))
+# gs.add_inhibitor(r=0.4, amount=1.0)
 
-Model.to_file(gs, 'data/gs_large_scale3', frames=1500, steps_per_frame=200)
+# Model.to_file(gs, 'data/gs_large_scale3', frames=1500, steps_per_frame=200)
 
-variedgs = VariedGS(source='data/gs_large_scale3', 
-					activator_diffusion=0.5, 
-					inhibitor_diffusion=0.25, 
-					dt=1.0, 
-					bottom_left=(-10,-10), 
-					top_right=(10,10))
+# variedgs = VariedGS(source='data/gs_large_scale3', 
+# 					activator_diffusion=0.5, 
+# 					inhibitor_diffusion=0.25, 
+# 					dt=1.0, 
+# 					bottom_left=(-10,-10), 
+# 					top_right=(10,10))
 
-variedgs.set_activator(np.ones(variedgs.x.shape))
-variedgs.add_inhibitor(r=0.5, amount=1.0)
+# variedgs.set_activator(np.ones(variedgs.x.shape))
+# variedgs.add_inhibitor(r=0.5, amount=1.0)
 
-Model.to_file(variedgs, 'data/variedgs-nested3', frames=2600, steps_per_frame=100)
+# Model.to_file(variedgs, 'data/variedgs-nested3', frames=2600, steps_per_frame=100)
 
 # Ran this line in parallel to above.
 # Model.create_animation('variedgs/nested3', 'data/variedgs-nested3', 'Inhibitor', frame_count=2600, frame_skip=100)
@@ -83,8 +83,9 @@ nested_pattern, _, _ = Model.get_last("data/variedgs-nested3")
 # average over an area of n*n cells
 n = 15
 stencil = np.ones((n,n))/(n*n)
-recovered_pattern = ndimage.gaussian_filter(nested_pattern['Inhibitor'], 6, mode='wrap')
-recovered_pattern = ndimage.convolve(recovered_pattern, stencil, mode='wrap')
+recovered_pattern = nested_pattern['Inhibitor']
+# recovered_pattern = ndimage.convolve(recovered_pattern, stencil, mode='wrap')
+# recovered_pattern = ndimage.gaussian_filter(recovered_pattern, 5.5, mode='wrap')
 
 fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(10, 5))
 

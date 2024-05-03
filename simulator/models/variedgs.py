@@ -22,7 +22,7 @@ class VariedGS(GrayScott):
 		self.right_point = right
 		
 		# Model both of them based on the final state of a pre-computed model.
-		data = Model.get_last(source)
+		data, _, _ = Model.get_last(source)
 		if (data['Inhibitor'].shape != self.x.shape):
 			raise ValueError("Given model is of incorrect shape.")
 		self.feed = data['Inhibitor']
