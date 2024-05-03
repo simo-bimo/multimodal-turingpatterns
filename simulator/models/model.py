@@ -208,15 +208,36 @@ class Model:
 		print("Saved animation: " + name)
 		pass
 	
-	def get_last(source):
+	def get_last(source, do_cache=True):
 		"""
 		Gets the last frame stored in a serialised model.
+		@param do_cache, whether to save the file with _last 
+			as an extension for future calls to the function.
 		"""
-		generator = Model.from_file(source)
+		do_save=False
+		if do_cache:
+			new_source=source+'_last'
+			try:
+				generator = Model.from_file(new_source)
+				x = next(generator)
+				do_save = False
+			except FileNotFoundError:
+				do_save = True
+				generator = Model.from_file(source)		
+				x = next(generator)
+		
+		y = next(generator)
 		last = None
 		for curr in generator:
 			last = curr
-		return last
+			
+		if do_cache and do_save:
+			with open(new_source+".dat", 'wb') as handle:
+				pickle.dump(x, handle, protocol=pickle.HIGHEST_PROTOCOL)
+				pickle.dump(y, handle, protocol=pickle.HIGHEST_PROTOCOL)
+				pickle.dump(last, handle, protocol=pickle.HIGHEST_PROTOCOL)
+		
+		return last, x, y
 	
 	def compare_difference(sources: list[str], tolerance=1e-5, do_print = False):
 		models = list(map(Model.from_file, sources))
