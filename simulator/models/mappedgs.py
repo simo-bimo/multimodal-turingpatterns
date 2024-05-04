@@ -10,6 +10,8 @@ class MappedGS(GrayScott):
 	Parameters are checked from the mapping every frame, and so can be changed adaptively with the model itself.
 	@param mapping: a dictionary that maps a parameter name i.e 'feed' to a function to get the next feed.
 	@param update_func: an optional function that is called once per step (i.e. to take a step in another model)
+	Note if scale is going to be <1, it is recommended to set dt < 1 aswell in proportion, so that we aren't taking
+	excessively large steps in reaction processes each frame.
 	"""
 	def __init__(self, mapping={}, update_func=lambda x: None, **kwargs):
 		super().__init__(**kwargs)

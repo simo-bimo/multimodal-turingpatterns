@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 
 class Model:
-	def __init__(self, dx=0.04, dy=0.04, dt=0.1, bottom_left=(-5,-5), top_right=(5,5)):
+	def __init__(self, dx=0.04, dy=0.04, dt=1.0, bottom_left=(-5,-5), top_right=(5,5)):
 		# General Params
 		self.dx=dx
 		self.dy=dy

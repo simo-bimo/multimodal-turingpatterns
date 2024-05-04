@@ -12,7 +12,6 @@ class MappedGSTests(unittest.TestCase):
 		self.frame_skip=10
 		return
 	
-	@unittest.skip('To make debugging easier with pdb')
 	def test_default(self):
 		# The defaults should match, so we don't need to set anything fancy.
 		gs = GrayScott()
