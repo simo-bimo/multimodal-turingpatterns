@@ -50,9 +50,11 @@ class MappedGS(GrayScott):
 		S = self.mapping['Scale']()
 		Da = self.mapping['Activator Diffusion']()
 		
-		return ((F*(np.ones(self.x.shape)-A)/S)\
-				- ((A * np.power(H, 2))/S)\
-				+ Da*self.laplace(A))
+		# import pdb; pdb.set_trace()
+		
+		return (F * (np.ones(self.x.shape)-A)\
+				- A * np.power(H, 2) ) / S \
+				+ Da*self.laplace(A)
 	
 	def deltaH(self):
 		A = self.activator
@@ -62,6 +64,6 @@ class MappedGS(GrayScott):
 		S = self.mapping['Scale']()
 		Dh = self.mapping['Inhibitor Diffusion']()
 		
-		return (A * np.power(H, 2)/S\
-				- (F + K)*H/S\
-				+ Dh*self.laplace(H))
+		return (A * np.power(H, 2)\
+				- (F + K)*H)/S\
+				+ Dh*self.laplace(H)

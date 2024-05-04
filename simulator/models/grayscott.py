@@ -35,20 +35,28 @@ class GrayScott(Model):
 	def deltaA(self):
 		A = self.activator
 		H = self.inhibitor
+		F = self.feed
+		Da = self.Da
+		
+		# import pdb; pdb.set_trace()
+		
 		if (self.curr_step % self.diffusion_extra == 0):
-			return (self.feed*(np.ones((self.x_count, self.y_count))-A)\
+			return (F * (np.ones(self.x.shape)-A)\
 					- A * np.power(H, 2)\
-					+ self.Da*self.laplace(A))
+					+ Da*self.laplace(A))
 		return self.Da*self.laplace(A)
 	
 	def deltaH(self):
 		A = self.activator
 		H = self.inhibitor
+		F = self.feed
+		K = self.decay
+		Dh = self.Dh
 		if (self.curr_step % self.diffusion_extra == 0):
 			return (A * np.power(H, 2)\
-					- (self.feed + self.decay)*H\
-					+ self.Dh*self.laplace(H))
-		return self.Dh*self.laplace(H)
+					- (F + K)*H\
+					+ Dh*self.laplace(H))
+		return Dh*self.laplace(H)
 	
 	def add_activator(self, p = (0.0, 0.0), r = 1.0, amount = 1.0):
 		"""
@@ -59,7 +67,7 @@ class GrayScott(Model):
 
 		self.activator += mask*amount
 
-		self.activator += np.random.rand(self.x_count, self.y_count) / 100
+		# self.activator += np.random.rand(self.x_count, self.y_count) / 100
 		np.clip(self.activator, a_min=0.0, a_max=1.0)
 
 		pass
@@ -73,7 +81,7 @@ class GrayScott(Model):
 
 		self.inhibitor += mask*amount
 
-		self.inhibitor += np.random.rand(self.x_count, self.y_count) / 100
+		# self.inhibitor += np.random.rand(self.x_count, self.y_count) / 100
 		np.clip(self.inhibitor, a_min=0.0, a_max=1.0)
 
 		pass

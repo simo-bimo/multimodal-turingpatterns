@@ -44,7 +44,8 @@ class Model:
 	def take_step_opt(self, num=1):
 		"""
 		An optimised version of take-step that uses maps instead of for loops on values.
-		TESTED - Correct but actually slower. May make a difference depnding
+		TESTED - Correct but actually slower. May make a difference depending on numpy
+		backend, could also open up to some threading but I doub't it'd be significant.
 		"""
 		for i in range(0, num):
 			def calc_delt(k,v):
@@ -135,7 +136,7 @@ class Model:
 
 		return x_vals, y_vals, x_num, y_num
 	
-	def to_file(model, filename: str, frames=1, steps_per_frame=1, optimised=False):
+	def to_file(model, filename: str, frames=1000, steps_per_frame=20, optimised=False):
 		"""
 		Saves result of simulation with frames frames into filename.dat.
 		"""

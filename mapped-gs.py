@@ -4,15 +4,23 @@ import numpy as np
 '''
 Creating a regular TP to see what happens
 '''
-mapgs = MappedGS(bottom_left=(-2,-2), top_right=(2,2))
-mapgs.set_activator(np.ones(mapgs.x.shape))
-mapgs.add_inhibitor(r=0.4)
+# mapgs = MappedGS(bottom_left=(-2,-2), top_right=(2,2))
+# mapgs.set_activator(np.ones(mapgs.x.shape))
+# mapgs.add_inhibitor(r=0.4)
 
-Model.to_file(mapgs, 'data/mapped_normal', frames=1000, steps_per_frame=20)
-Model.create_animation('mappedgs/normal',
-					   'data/mapped_normal',
-					   'Inhibitor',
-					   frame_count=1000)
+# Model.to_file(mapgs, 'data/mapped_normal')
+# Model.create_animation('mappedgs/normal',
+# 					   'data/mapped_normal',
+# 					   'Inhibitor')
+
+gs = GrayScott(bottom_left=(-2,-2), top_right=(2,2))
+gs.set_activator(np.ones(gs.x.shape))
+gs.add_inhibitor(r=0.4)
+
+Model.to_file(gs, 'data/gs_normal')
+Model.create_animation('grayscott/normal',
+					   'data/gs_normal',
+					   'Inhibitor')
 
 '''
 An attempt to generate a differently scaled model, to assert the effectiveness of the scale parameter
