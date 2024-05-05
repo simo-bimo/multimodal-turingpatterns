@@ -18,8 +18,10 @@ class GrayScott(Model):
 		# number of diffusion frames to run before also doing the reaction
 		self.diffusion_extra = diffusion_extra
 		
-		self.set_activator(np.zeros((self.x_count, self.y_count)))
+		# reasonable initial condition
+		self.set_activator(np.ones((self.x_count, self.y_count)))
 		self.set_inhibitor(np.zeros((self.x_count, self.y_count)))
+		self.add_inhibitor(r=0.5)
 		pass
 	
 	def set_activator(self, value):

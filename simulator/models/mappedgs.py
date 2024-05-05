@@ -36,6 +36,8 @@ class MappedGS(GrayScott):
 	def take_step(self, num=1):
 		for i in range(0, num):
 			self.update_func(1)
+			# TODO find a way to store mapping in
+			# values so they get stored in files together.
 			super().take_step(1)
 		return
 	
