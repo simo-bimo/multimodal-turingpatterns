@@ -13,7 +13,7 @@ class MappedGS(GrayScott):
 	Note if scale is going to be <1, it is recommended to set dt < 1 aswell in proportion, so that we aren't taking
 	excessively large steps in reaction processes each frame.
 	"""
-	def __init__(self, mapping={}, update_func=lambda x: None, **kwargs):
+	def __init__(self, mapping={}, update_func=lambda: None, **kwargs):
 		super().__init__(**kwargs)
 		self.mapping = mapping
 		self.update_func = update_func
@@ -35,15 +35,16 @@ class MappedGS(GrayScott):
 	
 	def take_step(self, num=1):
 		for i in range(0, num):
-			self.update_func(1)
+			self.update_func()
 			# TODO find a way to store mapping in
 			# values so they get stored in files together.
+			# print(f"Taken step: {self.mapping['Scale']()}")
 			super().take_step(1)
 		return
 	
 	def take_step_opt(self, num=1):
 		for i in range(0, num):
-			self.update_func(1)
+			self.update_func()
 			super().take_step_opt(1)
 		return
 	
@@ -71,3 +72,11 @@ class MappedGS(GrayScott):
 		return (A * np.power(H, 2)\
 				- (F + K)*H)/S\
 				+ Dh*self.laplace(H)
+	
+	def interpolate(array: np.ndarray, left, right):
+		"""
+		Uses 'array' (ranging from 0 to 1), to interpolate between left and rightmost values.
+		Returns a new array, ranging from left to right.
+		"""
+		
+		return left*np.ones(array.shape) + (right-left)*array
