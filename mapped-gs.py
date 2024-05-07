@@ -48,25 +48,55 @@ An attempt to generate a differently scaled model, to assert the effectiveness o
 '''
 Generate two Mapped GS, where one defines the scale of the other, to get a variable scale.
 '''
-n=1
-x = GrayScott(bottom_left=(-n,-n), top_right=(n,n)).x
+# n=1
+# x = GrayScott(bottom_left=(-n,-n), top_right=(n,n)).x
 
-# a GS with a fairly large scale by default.
+# # a GS with a fairly large scale by default.
+# large_scale = lambda: 20*np.ones(x.shape)
+# large_mapped_gs = MappedGS({'Scale': large_scale}, 
+# 						   bottom_left=(-n,-n), top_right=(n,n))
+
+# # a smaller one that varies it's scale between 0.1 and 0.5 based on the value of the larger one.
+# def small_scale():
+# 	return MappedGS.interpolate(large_mapped_gs.inhibitor, 0.1, 0.5)
+
+# small_mapped_gs = MappedGS({'Scale': small_scale}, 
+# 						   update_func=large_mapped_gs.take_step,
+# 						   bottom_left=(-n,-n), top_right=(n,n))
+
+# Model.to_file(small_mapped_gs, 'data/mappedgs/parallel_scale')
+# Model.create_animation('mappedgs/parallel_scale', 
+# 					   'data/mappedgs/parallel_scale',
+# 					   'Inhibitor',
+# 					   frame_count=1000)
+
+'''
+Generate two mapped gs, where the larger one is a regular gray scott, and the smaller
+interprets it's phase from the larger.
+Same as previous variedgs but both evolve at the same time.
+'''
+
+n=10
+x = GrayScott(bottom_left=(-n,-n), top_right=(n,n)).x
 large_scale = lambda: 20*np.ones(x.shape)
 large_mapped_gs = MappedGS({'Scale': large_scale}, 
 						   bottom_left=(-n,-n), top_right=(n,n))
 
-# a smaller one that varies it's scale between 0.001 and 0.02 based on the value of the larger one.
-def smaller_scale():
-	val = large_mapped_gs.inhibitor
-	return MappedGS.interpolate(large_mapped_gs.inhibitor, 0.01, 0.02)
+def small_kill():
+	return MappedGS.interpolate(large_mapped_gs.inhibitor, 0.06229, 0.06033)
 
-small_mapped_gs = MappedGS({'Scale': smaller_scale}, 
-						   update_func=large_mapped_gs.take_step,
-						   bottom_left=(-n,-n), top_right=(n,n))
+def small_feed():
+	return MappedGS.interpolate(large_mapped_gs.inhibitor, 0.03657, 0.02696)
 
-Model.to_file(small_mapped_gs, 'data/mappedgs/parallel_scale')
-Model.create_animation('mappedgs/parallel_scale', 
-					   'data/mappedgs/parallel_scale',
+small_mapped_gs = MappedGS({'Kill': small_kill, 
+							  'Feed': small_feed}, 
+							 update_func=large_mapped_gs.take_step,
+							 bottom_left=(-n,-n), top_right=(n,n))
+
+Model.to_file(small_mapped_gs, 'data/mappedgs/parallel_phase_fast',
+			  frames=500, steps_per_frame=1000)
+Model.create_animation('mappedgs/parallel_phase_fast', 
+					   'data/mappedgs/parallel_phase_fast',
 					   'Inhibitor',
-					   frame_count=1000)
+					   frame_count=500,
+					   steps_per_frame=1000)
