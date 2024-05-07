@@ -37,12 +37,9 @@ class MappedGS(GrayScott):
 		for i in range(0, num):
 			self.update_func()
 			super().take_step()
-		# TODO find a way to store mapping in
-		# values so they get stored in files together.
-		# print(f"Taken step: {self.mapping['Scale']()}")
 		# append mapped values to values
 		for k in self.mapping:
-			self.values["Mapped_"+k] = self.mapping[k]()
+			self.other_store["Mapped_"+k] = (self.mapping[k](), lambda:0)
 		
 		return
 	

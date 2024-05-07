@@ -35,6 +35,8 @@ class Model:
 		# A dictionary of the values, and their corresponding step functions.
 		# The key is a string, the value is (np.ndarray, function)
 		self.values = {}
+		# other values to store when converting to file.
+		self.other_store = {}
 		
 		self.clip = True
 		self.clip_min=0.0
@@ -158,6 +160,12 @@ class Model:
 			vals = {}
 			for k in model.values:
 				vals[k] = model.values[k][0]
+			for k in model.other_store:
+				# Avoid overwrites
+				new_key = k
+				if k in vals:
+					new_key += '_other'
+				vals[new_key] = model.other_store[k]
 			pickle.dump(vals, handle, protocol=pickle.HIGHEST_PROTOCOL)
 		pass
 	
