@@ -39,7 +39,7 @@ class MappedGS(GrayScott):
 			super().take_step()
 		# append mapped values to values
 		for k in self.mapping:
-			self.other_store["Mapped_"+k] = (self.mapping[k](), lambda:0)
+			self.other_store["Mapped_"+k] = self.mapping[k]()
 		
 		return
 	

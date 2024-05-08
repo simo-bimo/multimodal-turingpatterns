@@ -151,6 +151,12 @@ class Model:
 				vals = {}
 				for k in model.values:
 					vals[k] = model.values[k][0]
+				for k in model.other_store:
+					# Avoid overwrites
+					new_key = k
+					if k in vals:
+						new_key += '_other'
+					vals[new_key] = model.other_store[k]
 				pickle.dump(vals, handle, protocol=pickle.HIGHEST_PROTOCOL)
 				pickle.dump(vals, handle, protocol=pickle.HIGHEST_PROTOCOL)
 				if optimised:

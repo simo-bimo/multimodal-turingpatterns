@@ -1,5 +1,8 @@
 from simulator.models import *
+
 import numpy as np
+from scipy import ndimage
+import matplotlib.pyplot as plt
 
 '''
 Creating a regular TP to see what happens
@@ -76,27 +79,57 @@ interprets it's phase from the larger.
 Same as previous variedgs but both evolve at the same time.
 '''
 
-n=10
-x = GrayScott(bottom_left=(-n,-n), top_right=(n,n)).x
-large_scale = lambda: 20*np.ones(x.shape)
-large_mapped_gs = MappedGS({'Scale': large_scale}, 
-						   bottom_left=(-n,-n), top_right=(n,n))
+# n=10
+# x = GrayScott(bottom_left=(-n,-n), top_right=(n,n)).x
+# large_scale = lambda: 20*np.ones(x.shape)
+# large_mapped_gs = MappedGS({'Scale': large_scale}, 
+# 						   bottom_left=(-n,-n), top_right=(n,n))
 
-def small_kill():
-	return MappedGS.interpolate(large_mapped_gs.inhibitor, 0.06229, 0.06033)
+# def small_kill():
+# 	return MappedGS.interpolate(large_mapped_gs.inhibitor, 0.06229, 0.06033)
 
-def small_feed():
-	return MappedGS.interpolate(large_mapped_gs.inhibitor, 0.03657, 0.02696)
+# def small_feed():
+# 	return MappedGS.interpolate(large_mapped_gs.inhibitor, 0.03657, 0.02696)
 
-small_mapped_gs = MappedGS({'Kill': small_kill, 
-							  'Feed': small_feed}, 
-							 update_func=large_mapped_gs.take_step,
-							 bottom_left=(-n,-n), top_right=(n,n))
+# small_mapped_gs = MappedGS({'Kill': small_kill, 
+# 							  'Feed': small_feed}, 
+# 							 update_func=large_mapped_gs.take_step,
+# 							 bottom_left=(-n,-n), top_right=(n,n))
 
-Model.to_file(small_mapped_gs, 'data/mappedgs/parallel_phase_fast',
-			  frames=500, steps_per_frame=1000)
-Model.create_animation('mappedgs/parallel_phase_fast', 
-					   'data/mappedgs/parallel_phase_fast',
-					   'Inhibitor',
-					   frame_count=500,
-					   steps_per_frame=1000)
+# Model.to_file(small_mapped_gs, 'data/mappedgs/parallel_phase_fast',
+# 			  frames=500, steps_per_frame=100)
+# Model.create_animation('mappedgs/parallel_phase_fast', 
+# 					   'data/mappedgs/parallel_phase_fast',
+# 					   'Inhibitor',
+# 					   frame_count=500,
+# 					   frame_skip=100)
+
+'''
+Generate last frame plot of the above model
+'''
+
+original_pattern, x, y = Model.get_last("data/mappedgs/parallel_phase_fast")
+
+# Perform a Gaussian blur and then 
+# average over an area of n*n cells
+n = 15
+stencil = np.ones((n,n))/(n*n)
+recovered_pattern = original_pattern['Inhibitor']
+# recovered_pattern = ndimage.convolve(recovered_pattern, stencil, mode='wrap')
+recovered_pattern = ndimage.gaussian_filter(recovered_pattern, 5.5, mode='wrap')
+
+fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(10, 5), sharey=True)
+
+fig.suptitle("Major Pattern v Recovered Pattern")
+ax[0].pcolormesh(x,y,original_pattern['Mapped_Kill'])
+ax[0].set_title("Major Pattern")
+quad=ax[1].pcolormesh(x,y,recovered_pattern)
+ax[1].set_title("Recovered Pattern")
+
+
+ax[0].set_box_aspect(1.0)
+ax[1].set_box_aspect(1.0)
+
+cb = fig.colorbar(quad, ax=ax.ravel().tolist())
+plt.show()
+fig.savefig("plots/major_v_recovered_gauss.png")
