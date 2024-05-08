@@ -76,15 +76,16 @@ Third attempt, this time make the starting model even larger.
 """
 Plot an average value of the previous nested graph against the 
 """
-original_pattern, x, y = Model.get_last("data/gs_large_scale3")
-nested_pattern, _, _ = Model.get_last("data/variedgs-nested3")
+original_pattern, x, y = Model.get_last("data/gs/gs_large_scale3")
+nested_pattern, _, _ = Model.get_last("data/variedgs/variedgs-nested3")
 
 # Perform a Gaussian blur and then 
 # average over an area of n*n cells
-n = 15
+n = 10
 stencil = np.ones((n,n))/(n*n)
 recovered_pattern = nested_pattern['Inhibitor']
-# recovered_pattern = ndimage.convolve(recovered_pattern, stencil, mode='wrap')
+recovered_pattern = 1 - recovered_pattern
+recovered_pattern = ndimage.convolve(recovered_pattern, stencil, mode='wrap')
 recovered_pattern = ndimage.gaussian_filter(recovered_pattern, 5.5, mode='wrap')
 
 fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(10, 5), sharey=True)
@@ -101,4 +102,4 @@ ax[1].set_box_aspect(1.0)
 
 cb = fig.colorbar(quad, ax=ax.ravel().tolist())
 plt.show()
-fig.savefig("plots/original_v_recovered_gauss.png")
+fig.savefig("plots/original_v_recovered_averaged+gauss_inverted.png")
