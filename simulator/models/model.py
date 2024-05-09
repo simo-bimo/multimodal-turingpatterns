@@ -243,7 +243,7 @@ class Model:
 		next(data)
 		
 		quads = [ax.pcolormesh(x, y, f(next(data)[p])) for ax, f, p in zips]
-		cb = plt.colorbar(quads[0])
+		cb = plt.colorbar(quads[0], ax=axs.ravel().tolist(), location='bottom')
 		
 		[ax.set_box_aspect(1.0) for ax in axs]
 		[ax.set_title(p) for ax,f,p in zips]

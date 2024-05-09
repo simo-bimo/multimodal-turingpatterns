@@ -55,9 +55,9 @@ Generate two Mapped GS, where one defines the scale of the other, to get a varia
 # x = GrayScott(bottom_left=(-n,-n), top_right=(n,n)).x
 
 # # a GS with a fairly large scale by default.
-# large_scale = lambda: 20*np.ones(x.shape)
+# large_scale = lambda: 60*np.ones(x.shape)
 # large_mapped_gs = MappedGS({'Scale': large_scale}, 
-# 						   bottom_left=(-n,-n), top_right=(n,n))
+# 						   dt=4.0, bottom_left=(-n,-n), top_right=(n,n))
 
 # # a smaller one that varies it's scale between 0.1 and 0.5 based on the value of the larger one.
 # def small_scale():
@@ -104,17 +104,54 @@ Same as previous variedgs but both evolve at the same time.
 # 					   frame_count=5000,
 # 					   frame_skip=100)
 
-Model.create_animations('mappedgs/parallel_phase_both', 
-					   'data/mappedgs/parallel_phase_fast',
-					   ['Inhibitor', 'Mapped_Feed'],
-					   frame_count=5000,
-					   frame_skip=100)
+# Model.create_animations('mappedgs/parallel_phase_both', 
+# 					   'data/mappedgs/parallel_phase_fast',
+# 					   ['Inhibitor', 'Mapped_Feed'],
+# 					   frame_count=5000,
+# 					   frame_skip=100)
+
+'''
+Same as previous, except with a larger scale for the bigger one,
+and also a faster dt (this lead to an error), so that it (hopefully) doesn't take so many frames.
+Also changed the ends points to hopefully get a stronger change.
+'''
+
+# n=10
+# x = GrayScott(bottom_left=(-n,-n), top_right=(n,n)).x
+# large_scale = lambda: 100*np.ones(x.shape)
+# large_mapped_gs = MappedGS({'Scale': large_scale}, 
+# 						   bottom_left=(-n,-n), top_right=(n,n))
+
+# def small_kill():
+# 	return MappedGS.interpolate(large_mapped_gs.inhibitor, 0.04188, 0.06)
+
+# def small_feed():
+# 	return MappedGS.interpolate(large_mapped_gs.inhibitor, 0.01, 0.03728)
+
+# small_mapped_gs = MappedGS({'Kill': small_kill, 
+# 							  'Feed': small_feed}, 
+# 							 update_func=large_mapped_gs.take_step,
+# 							 bottom_left=(-n,-n), top_right=(n,n))
+
+# Model.to_file(small_mapped_gs, 'data/mappedgs/parallel_phase_fast2',
+# 			  frames=1000, steps_per_frame=10)
+# Model.create_animation('mappedgs/parallel_phase_fast2', 
+# 					   'data/mappedgs/parallel_phase_fast2',
+# 					   'Inhibitor',
+# 					   frame_count=1000,
+# 					   frame_skip=10)
+
+# Model.create_animations('mappedgs/parallel_phase_both2', 
+# 					   'data/mappedgs/parallel_phase_fast2',
+# 					   ['Inhibitor', 'Mapped_Feed'],
+# 					   frame_count=1000,
+# 					   frame_skip=10)
 
 '''
 Generate last frame plot of the above model
 '''
 
-original_pattern, x, y = Model.get_last("data/mappedgs/parallel_phase_fast")
+original_pattern, x, y = Model.get_last("data/mappedgs/parallel_phase_fast2")
 
 # Perform a Gaussian blur and then 
 # average over an area of n*n cells
@@ -136,6 +173,6 @@ ax[1].set_title("Recovered Pattern")
 ax[0].set_box_aspect(1.0)
 ax[1].set_box_aspect(1.0)
 
-cb = fig.colorbar(quad, ax=ax.ravel().tolist())
+cb = fig.colorbar(quad, ax=ax.ravel().tolist(), location='bottom')
 plt.show()
-fig.savefig("plots/major_v_recovered_gauss+averaged.png")
+fig.savefig("plots/major_v_recovered2_gauss+averaged.png")
