@@ -97,12 +97,18 @@ Same as previous variedgs but both evolve at the same time.
 # 							 bottom_left=(-n,-n), top_right=(n,n))
 
 # Model.to_file(small_mapped_gs, 'data/mappedgs/parallel_phase_fast',
-# 			  frames=500, steps_per_frame=100)
+# 			  frames=5000, steps_per_frame=100)
 # Model.create_animation('mappedgs/parallel_phase_fast', 
 # 					   'data/mappedgs/parallel_phase_fast',
 # 					   'Inhibitor',
-# 					   frame_count=500,
+# 					   frame_count=5000,
 # 					   frame_skip=100)
+
+Model.create_animations('mappedgs/parallel_phase_both', 
+					   'data/mappedgs/parallel_phase_fast',
+					   ['Inhibitor', 'Mapped_Feed'],
+					   frame_count=5000,
+					   frame_skip=100)
 
 '''
 Generate last frame plot of the above model
@@ -115,7 +121,7 @@ original_pattern, x, y = Model.get_last("data/mappedgs/parallel_phase_fast")
 n = 15
 stencil = np.ones((n,n))/(n*n)
 recovered_pattern = original_pattern['Inhibitor']
-# recovered_pattern = ndimage.convolve(recovered_pattern, stencil, mode='wrap')
+recovered_pattern = ndimage.convolve(recovered_pattern, stencil, mode='wrap')
 recovered_pattern = ndimage.gaussian_filter(recovered_pattern, 5.5, mode='wrap')
 
 fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(10, 5), sharey=True)
@@ -132,4 +138,4 @@ ax[1].set_box_aspect(1.0)
 
 cb = fig.colorbar(quad, ax=ax.ravel().tolist())
 plt.show()
-fig.savefig("plots/major_v_recovered_gauss.png")
+fig.savefig("plots/major_v_recovered_gauss+averaged.png")

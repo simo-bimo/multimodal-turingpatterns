@@ -34,6 +34,8 @@ class MappedGS(GrayScott):
 		return
 	
 	def take_step(self, num=1):
+		for k in self.mapping:
+			self.other_store["Mapped_"+k] = self.mapping[k]()
 		for i in range(0, num):
 			self.update_func()
 			super().take_step()

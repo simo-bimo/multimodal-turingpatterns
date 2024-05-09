@@ -223,6 +223,43 @@ class Model:
 		print("Saved animation: " + name)
 		pass
 	
+	def create_animations(name: str, source: str, to_plot: list, plot_funcs=[], frame_count=1000, frame_skip=20, ):
+		print(f"Beginning animations of '{name}' from '{source}.dat'")
+		data = Model.from_file(source)
+		x = next(data)
+		y = next(data)
+		
+		number_params = len(to_plot)
+		if len(plot_funcs) != number_params:
+			plot_funcs = [lambda x:x for x in to_plot]
+		
+		fig, axs = plt.subplots(ncols=number_params)
+		fig.suptitle(f"{to_plot}: 0")
+
+		zips = zip(axs, plot_funcs, to_plot)
+		
+		# Skip a few because apparently it didn't store the first couple times
+		next(data)
+		next(data)
+		
+		quads = [ax.pcolormesh(x, y, f(next(data)[p])) for ax, f, p in zips]
+		cb = plt.colorbar(quads[0])
+		
+		[ax.set_box_aspect(1.0) for ax in axs]
+		[ax.set_title(p) for ax,f,p in zips]
+
+		def animate(i):
+			fig.suptitle(f"{to_plot}: {i*frame_skip}")
+			curr_frame = next(data)
+			[q.set_array(f(curr_frame[p])) for q,f,p in zip(quads, plot_funcs, to_plot)]
+			return tuple(quads)
+
+		anim = FuncAnimation(fig, animate, frames=frame_count)
+
+		anim.save('animations/'+name+'.gif', writer='pillow', fps=30)
+		print("Saved animation: " + name)
+		pass
+	
 	def get_last(source, do_cache=True):
 		"""
 		Gets the last frame stored in a serialised model.
