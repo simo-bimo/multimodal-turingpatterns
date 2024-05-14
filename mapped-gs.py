@@ -3,6 +3,8 @@ from simulator.models import *
 import numpy as np
 from scipy import ndimage
 import matplotlib.pyplot as plt
+from mpl_toolkits.axes_grid1 import ImageGrid
+from matplotlib.colorbar import Colorbar
 
 '''
 Creating a regular TP to see what happens
@@ -141,17 +143,15 @@ Also changed the ends points to hopefully get a stronger change.
 # 					   frame_count=1000,
 # 					   frame_skip=10)
 
-# Model.create_animations('mappedgs/parallel_phase_both2', 
-# 					   'data/mappedgs/parallel_phase_fast2',
-# 					   ['Inhibitor', 'Mapped_Feed'],
-# 					   frame_count=1000,
-# 					   frame_skip=10)
+# Model.create_plot('mappedgs/parallel_phase_both2', 
+# 					   'data/mappedgs/parallel_phase_fast2_last',
+# 					   ['Inhibitor', 'Mapped_Feed'],)
 
 '''
 Generate last frame plot of the above model
 '''
 
-original_pattern, x, y = Model.get_last("data/mappedgs/parallel_phase_fast2")
+original_pattern, x, y = Model.get_last("data/mappedgs/parallel_phase_fast")
 
 # Perform a Gaussian blur and then 
 # average over an area of n*n cells
@@ -161,18 +161,29 @@ recovered_pattern = original_pattern['Inhibitor']
 recovered_pattern = ndimage.convolve(recovered_pattern, stencil, mode='wrap')
 recovered_pattern = ndimage.gaussian_filter(recovered_pattern, 5.5, mode='wrap')
 
-fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(10, 5), sharey=True)
+# fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(10, 5), sharey=True)
+
+fig = plt.figure(figsize=(8,4.5))
+axs = ImageGrid(fig, 111,          # as in plt.subplot(111)
+			nrows_ncols=(1,2),
+			axes_pad=0.25,
+			share_all=True,
+			cbar_location="right",
+			cbar_mode="single",
+			cbar_size="7%",
+			cbar_pad=0.25,
+			)
 
 fig.suptitle("Major Pattern v Recovered Pattern")
-ax[0].pcolormesh(x,y,original_pattern['Mapped_Kill'])
-ax[0].set_title("Major Pattern")
-quad=ax[1].pcolormesh(x,y,recovered_pattern)
-ax[1].set_title("Recovered Pattern")
+quad0=axs[0].pcolormesh(x,y,original_pattern['Mapped_Kill'])
+axs[0].set_title("Major Pattern")
+quad1=axs[1].pcolormesh(x,y,recovered_pattern)
+axs[1].set_title("Recovered Pattern")
 
+axs[0].cax.cla()
+cb = Colorbar(axs[0].cax, quad1)
+# cb2 = Colorbar(axs[1].cax, quad1)
 
-ax[0].set_box_aspect(1.0)
-ax[1].set_box_aspect(1.0)
+[ax.set_box_aspect(1.0) for ax in axs]
 
-cb = fig.colorbar(quad, ax=ax.ravel().tolist(), location='bottom')
-plt.show()
-fig.savefig("plots/major_v_recovered2_gauss+averaged.png")
+fig.savefig("plots/major_v_recovered_gauss+averaged.png")

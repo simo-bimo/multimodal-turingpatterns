@@ -3,6 +3,8 @@ import numpy as np
 from scipy import ndimage
 
 import matplotlib.pyplot as plt
+from mpl_toolkits.axes_grid1 import ImageGrid
+from matplotlib.colorbar import Colorbar
 
 # variedgs = VariedGS(dt=1.0, bottom_left=(-5,-5), top_right=(5,5))
 # variedgs.set_activator(np.ones((variedgs.x_count, variedgs.y_count)))
@@ -81,25 +83,34 @@ nested_pattern, _, _ = Model.get_last("data/variedgs/variedgs-nested3")
 
 # Perform a Gaussian blur and then 
 # average over an area of n*n cells
-n = 10
+n = 15
 stencil = np.ones((n,n))/(n*n)
 recovered_pattern = nested_pattern['Inhibitor']
-recovered_pattern = 1 - recovered_pattern
-recovered_pattern = ndimage.convolve(recovered_pattern, stencil, mode='wrap')
-recovered_pattern = ndimage.gaussian_filter(recovered_pattern, 5.5, mode='wrap')
+# recovered_pattern = 1 - recovered_pattern
+# recovered_pattern = ndimage.convolve(recovered_pattern, stencil, mode='wrap')
+# recovered_pattern = ndimage.gaussian_filter(recovered_pattern, 5.5, mode='wrap')
 
-fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(10, 5), sharey=True)
+fig = plt.figure(figsize=(8,4.5))
+axs = ImageGrid(fig, 111,          # as in plt.subplot(111)
+			nrows_ncols=(1,2),
+			axes_pad=0.25,
+			share_all=True,
+			cbar_location="right",
+			cbar_mode="single",
+			cbar_size="7%",
+			cbar_pad=0.25,
+			)
 
 fig.suptitle("Original Pattern v Recovered Pattern")
-ax[0].pcolormesh(x,y,original_pattern['Inhibitor'])
-ax[0].set_title("Original Pattern")
-quad=ax[1].pcolormesh(x,y,recovered_pattern)
-ax[1].set_title("Recovered Pattern")
+quad0=axs[0].pcolormesh(x,y,original_pattern['Inhibitor'])
+axs[0].set_title("Original Pattern")
+quad1=axs[1].pcolormesh(x,y,recovered_pattern)
+axs[1].set_title("Recovered Pattern")
 
+axs[0].cax.cla()
+cb = Colorbar(axs[0].cax, quad1)
+# cb2 = Colorbar(axs[1].cax, quad1)
 
-ax[0].set_box_aspect(1.0)
-ax[1].set_box_aspect(1.0)
+[ax.set_box_aspect(1.0) for ax in axs]
 
-cb = fig.colorbar(quad, ax=ax.ravel().tolist())
-plt.show()
-fig.savefig("plots/original_v_recovered_averaged+gauss_inverted.png")
+fig.savefig("plots/varied-original_v_recovered.png")

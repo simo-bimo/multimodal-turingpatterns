@@ -4,6 +4,8 @@ import pickle
 
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
+from mpl_toolkits.axes_grid1 import ImageGrid
+from matplotlib.colorbar import Colorbar
 
 class Model:
 	def __init__(self, dx=0.04, dy=0.04, dt=1.0, bottom_left=(-5,-5), top_right=(5,5)):
@@ -233,23 +235,35 @@ class Model:
 		if len(plot_funcs) != number_params:
 			plot_funcs = [lambda x:x for x in to_plot]
 		
-		fig, axs = plt.subplots(ncols=number_params)
-		fig.suptitle(f"{to_plot}: 0")
+		# fig, axs = plt.subplots(ncols=number_params, figsize=(8, 4.5))
+		fig = plt.figure(figsize=(8,4.5))
+		axs = ImageGrid(fig, 111,          # as in plt.subplot(111)
+                 nrows_ncols=(1,number_params),
+                 axes_pad=0.25,
+                 share_all=True,
+                 cbar_location="right",
+                 cbar_mode="single",
+                 cbar_size="7%",
+                 cbar_pad=0.15,
+                 )
+		title = ' v '.join(to_plot)
+		fig.suptitle(title)
 
 		zips = zip(axs, plot_funcs, to_plot)
 		
-		# Skip a few because apparently it didn't store the first couple times
-		next(data)
-		next(data)
-		
-		quads = [ax.pcolormesh(x, y, f(next(data)[p])) for ax, f, p in zips]
-		cb = plt.colorbar(quads[0], ax=axs.ravel().tolist(), location='bottom')
-		
+		# # Skip a few because apparently it didn't store the first couple times
+		# next(data)
+		# next(data)
+		curr_frame = next(data)
+		quads = [ax.pcolormesh(x, y, f(curr_frame[p])) for ax, f, p in zips]
+		# cb = plt.colorbar(quads[0], ax=axs.ravel().tolist(), location='bottom')
+		axs[0].cax.cla()
+		cb = Colorbar(axs[0].cax, quads[0])
+		# cb = axs[0].cax.colorbar(quads[0], vmin=0.0, vmax=1.0)
 		[ax.set_box_aspect(1.0) for ax in axs]
-		[ax.set_title(p) for ax,f,p in zips]
 
 		def animate(i):
-			fig.suptitle(f"{to_plot}: {i*frame_skip}")
+			[ax.set_title(f"{p}: {i*frame_skip}") for ax,p in zip(axs, to_plot)]
 			curr_frame = next(data)
 			[q.set_array(f(curr_frame[p])) for q,f,p in zip(quads, plot_funcs, to_plot)]
 			return tuple(quads)
@@ -259,6 +273,45 @@ class Model:
 		anim.save('animations/'+name+'.gif', writer='pillow', fps=30)
 		print("Saved animation: " + name)
 		pass
+	
+	def create_plot(name: str, source: str, to_plot: list, plot_funcs=[]):
+		print(f"Beginning Plotting of '{name}' from final frame of '{source}.dat'")
+		data, x, y = Model.get_last(source)
+		
+		number_params = len(to_plot)
+		if len(plot_funcs) != number_params:
+			plot_funcs = [lambda x:x for x in to_plot]
+		
+		# fig, axs = plt.subplots(ncols=number_params, figsize=(8, 4.5))
+		fig = plt.figure(figsize=(8,4.5))
+		axs = ImageGrid(fig, 111,          # as in plt.subplot(111)
+                 nrows_ncols=(1,number_params),
+                 axes_pad=0.25,
+                 share_all=True,
+                 cbar_location="right",
+                 cbar_mode="single",
+                 cbar_size="7%",
+                 cbar_pad=0.15,
+                 )
+		title = ' v '.join(to_plot)
+		fig.suptitle(title)
+
+		zips = zip(axs, plot_funcs, to_plot)
+		
+		# # Skip a few because apparently it didn't store the first couple times
+		# next(data)
+		# next(data)
+		quads = [ax.pcolormesh(x, y, f(data[p])) for ax, f, p in zips]
+		axs[0].cax.cla()
+		cb = Colorbar(axs[0].cax, quads[0])
+		# cb = axs[0].cax.colorbar(quads[0], vmin=0.0, vmax=1.0)
+		
+		[ax.set_box_aspect(1.0) for ax in axs]
+		[ax.set_title(p) for ax,p in zip(axs, to_plot)]
+		
+		plt.savefig("plots/" + name + ".png")
+		print("Saved figure: " + name)
+		
 	
 	def get_last(source, do_cache=True):
 		"""
