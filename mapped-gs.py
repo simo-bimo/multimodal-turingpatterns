@@ -163,8 +163,8 @@ recovered_pattern = ndimage.gaussian_filter(recovered_pattern, 5.5, mode='wrap')
 
 # fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(10, 5), sharey=True)
 
-fig = plt.figure(figsize=(8,4.5))
-axs = ImageGrid(fig, 111,          # as in plt.subplot(111)
+fig = plt.figure(figsize=(8,4))
+axs = ImageGrid(fig, 111,
 			nrows_ncols=(1,2),
 			axes_pad=0.25,
 			share_all=True,
@@ -174,11 +174,11 @@ axs = ImageGrid(fig, 111,          # as in plt.subplot(111)
 			cbar_pad=0.25,
 			)
 
-fig.suptitle("Major Pattern v Recovered Pattern")
+# fig.suptitle("Primary Pattern v Recovered Pattern")
 quad0=axs[0].pcolormesh(x,y,original_pattern['Mapped_Kill'])
-axs[0].set_title("Major Pattern")
+axs[0].set_title("Primary Pattern")
 quad1=axs[1].pcolormesh(x,y,recovered_pattern)
-axs[1].set_title("Recovered Pattern")
+axs[1].set_title("Secondary Pattern (Average + Gauss)")
 
 axs[0].cax.cla()
 cb = Colorbar(axs[0].cax, quad1)
@@ -186,4 +186,4 @@ cb = Colorbar(axs[0].cax, quad1)
 
 [ax.set_box_aspect(1.0) for ax in axs]
 
-fig.savefig("plots/major_v_recovered_gauss+averaged.png")
+fig.savefig("plots/mappedgs/bad_scale_comp_2.png")

@@ -70,10 +70,10 @@ Third attempt, this time make the starting model even larger.
 # variedgs.set_activator(np.ones(variedgs.x.shape))
 # variedgs.add_inhibitor(r=0.5, amount=1.0)
 
-# Model.to_file(variedgs, 'data/variedgs-nested3', frames=2600, steps_per_frame=100)
+# Model.to_file(variedgs, 'data/variedgs-nested3', frames=1000, steps_per_frame=100)
 
 # Ran this line in parallel to above.
-# Model.create_animation('variedgs/nested3', 'data/variedgs-nested3', 'Inhibitor', frame_count=2600, frame_skip=100)
+# Model.create_animation('variedgs/nested3_cut_mores', 'data/variedgs/variedgs-nested3', 'Inhibitor', frame_count=681, frame_skip=100)
 
 """
 Plot an average value of the previous nested graph against the 
@@ -83,34 +83,44 @@ nested_pattern, _, _ = Model.get_last("data/variedgs/variedgs-nested3")
 
 # Perform a Gaussian blur and then 
 # average over an area of n*n cells
-n = 15
+n = 10
 stencil = np.ones((n,n))/(n*n)
 recovered_pattern = nested_pattern['Inhibitor']
 # recovered_pattern = 1 - recovered_pattern
 # recovered_pattern = ndimage.convolve(recovered_pattern, stencil, mode='wrap')
 # recovered_pattern = ndimage.gaussian_filter(recovered_pattern, 5.5, mode='wrap')
 
-fig = plt.figure(figsize=(8,4.5))
-axs = ImageGrid(fig, 111,          # as in plt.subplot(111)
+import pywt
+a, (hd, vd, dd) = pywt.dwt2(recovered_pattern, 'bior1.3')
+recovered_pattern = hd + vd + dd
+
+fig = plt.figure(figsize=(8,4))
+axs = ImageGrid(fig, 111,
 			nrows_ncols=(1,2),
 			axes_pad=0.25,
 			share_all=True,
-			cbar_location="right",
-			cbar_mode="single",
-			cbar_size="7%",
-			cbar_pad=0.25,
+			# cbar_location="right",
+			# cbar_mode="single",
+			# cbar_size="7%",
+			# cbar_pad=0.25,
 			)
 
 fig.suptitle("Original Pattern v Recovered Pattern")
-quad0=axs[0].pcolormesh(x,y,original_pattern['Inhibitor'])
-axs[0].set_title("Original Pattern")
-quad1=axs[1].pcolormesh(x,y,recovered_pattern)
-axs[1].set_title("Recovered Pattern")
+quad0=axs[0].imshow(original_pattern['Inhibitor'])
+axs[0].set_title("Primary Pattern")
+quad1=axs[1].imshow(recovered_pattern)
+axs[1].set_title("Secondary Pattern (Wavelet)")
 
-axs[0].cax.cla()
-cb = Colorbar(axs[0].cax, quad1)
+# axs[0].cax.cla()
+# cb = Colorbar(axs[0].cax, quad1)
 # cb2 = Colorbar(axs[1].cax, quad1)
 
-[ax.set_box_aspect(1.0) for ax in axs]
+# [ax.set_box_aspect(1.0) for ax in axs]
 
-fig.savefig("plots/varied-original_v_recovered.png")
+fig.savefig("plots/variedgs/nested_comp_wavelet.png")
+
+'''
+Just a plot of the recovered pattern.
+'''
+original_pattern, x, y = Model.get_last("data/gs/gs_large_scale3")
+# Model.create_plot('variedgs/nested_pattern', 'data/variedgs/variedgs-nested3', ['Inhibitor'],)
