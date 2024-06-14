@@ -179,9 +179,9 @@ axs = ImageGrid(fig, 111,
 			cbar_pad=0.25,
 			)
 
-fig.suptitle("Figure 2: Parallel Double Gray-Scott")
+fig.suptitle("Figure 3: Parallel Double Gray-Scott")
 quad0=axs[0].pcolormesh(x,y,original_pattern['Mapped_Kill'])
-axs[0].set_title("a) Primary Pattern")
+# axs[0].set_title("a) Primary Pattern")
 quad1=axs[1].pcolormesh(x,y,original_pattern['Inhibitor'])
 axs[1].set_title("b) Secondary Pattern")
 quad2=axs[2].pcolormesh(x,y,recovered_pattern)
@@ -193,4 +193,4 @@ cb = Colorbar(axs[0].cax, quad1)
 
 [ax.set_box_aspect(1.0) for ax in axs]
 
-fig.savefig("plots/mappedgs/parallel-comp-similar.png")
+fig.savefig("plots/mappedgs/parallel-comp-too-similar.png")

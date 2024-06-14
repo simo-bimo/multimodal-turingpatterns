@@ -127,8 +127,70 @@ Plot an average value of the previous nested graph against the
 More plots
 '''
 
-original_pattern, x, y = Model.get_last("data/gs/gs_large_scale3")
-nested_pattern, _, _ = Model.get_last("data/variedgs/variedgs-nested3")
+# original_pattern, x, y = Model.get_last("data/gs/gs_large_scale2")
+# nested_pattern, _, _ = Model.get_last("data/variedgs/variedgs-nested2")
+
+# # Perform a Gaussian blur and then 
+# # average over an area of n*n cells
+# n = 10
+# stencil = np.ones((n,n))/(n*n)
+# recovered_pattern = nested_pattern['Inhibitor']
+# # recovered_pattern = 1 - recovered_pattern
+# recovered_pattern = ndimage.convolve(recovered_pattern, stencil, mode='wrap')
+# recovered_pattern = ndimage.gaussian_filter(recovered_pattern, 5.5, mode='wrap')
+
+# fig = plt.figure(figsize=(8,3))
+# axs = ImageGrid(fig, 111,
+# 			nrows_ncols=(1,3),
+# 			axes_pad=0.2,
+# 			share_all=True,
+# 			cbar_location="right",
+# 			cbar_mode="single",
+# 			cbar_size="7%",
+# 			cbar_pad=0.25,
+# 			)
+
+# fig.suptitle("Figure 3: Similar Scales")
+# quad0=axs[0].pcolormesh(x,y,original_pattern['Inhibitor'])
+# axs[0].set_title("a) Primary Pattern")
+# quad1=axs[1].pcolormesh(x,y,nested_pattern['Inhibitor'])
+# axs[1].set_title("b) Secondary Pattern")
+# quad2=axs[2].pcolormesh(x,y,recovered_pattern)
+# axs[2].set_title("c) Recovered Pattern")
+
+# axs[0].cax.cla()
+# cb = Colorbar(axs[0].cax, quad1)
+# cb2 = Colorbar(axs[1].cax, quad1)
+
+# [ax.set_box_aspect(1.0) for ax in axs]
+
+# fig.savefig("plots/variedgs/same-scale.png")
+
+# '''
+# Just a plot of the recovered pattern.
+# '''
+# original_pattern, x, y = Model.get_last("data/gs/gs_large_scale3")
+# # Model.create_plot('variedgs/nested_pattern', 'data/variedgs/variedgs-nested3', ['Inhibitor'],)
+
+'''
+Degenerate Patterns
+'''
+
+original_pattern, x, y = Model.get_last("data/gs/gs_large_scale")
+
+variedgs = VariedGS(source='data/gs/gs_large_scale', 
+					activator_diffusion=0.9, 
+					inhibitor_diffusion=0.45, 
+					dt=1.0, 
+					bottom_left=(-10,-10), 
+					top_right=(10,10))
+
+# variedgs.set_activator(np.ones(variedgs.x.shape))
+# variedgs.add_inhibitor(r=0.5, amount=1.0)
+
+Model.to_file(variedgs, 'data/variedgs/degenerate3', frames=20, steps_per_frame=1000)
+
+nested_pattern, _, _ = Model.get_last("data/variedgs/degenerate3")
 
 # Perform a Gaussian blur and then 
 # average over an area of n*n cells
@@ -150,7 +212,7 @@ axs = ImageGrid(fig, 111,
 			cbar_pad=0.25,
 			)
 
-fig.suptitle("Figure 1: Pre-Computed Double Gray-Scott")
+fig.suptitle("Figure 3: Similar Scales")
 quad0=axs[0].pcolormesh(x,y,original_pattern['Inhibitor'])
 axs[0].set_title("a) Primary Pattern")
 quad1=axs[1].pcolormesh(x,y,nested_pattern['Inhibitor'])
@@ -164,7 +226,7 @@ cb2 = Colorbar(axs[1].cax, quad1)
 
 [ax.set_box_aspect(1.0) for ax in axs]
 
-fig.savefig("plots/variedgs/nested_comparisons.png")
+fig.savefig("plots/variedgs/sim-scale.png")
 
 '''
 Just a plot of the recovered pattern.
