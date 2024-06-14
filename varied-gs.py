@@ -78,6 +78,55 @@ Third attempt, this time make the starting model even larger.
 """
 Plot an average value of the previous nested graph against the 
 """
+# original_pattern, x, y = Model.get_last("data/gs/gs_large_scale3")
+# nested_pattern, _, _ = Model.get_last("data/variedgs/variedgs-nested3")
+
+# # Perform a Gaussian blur and then 
+# # average over an area of n*n cells
+# n = 10
+# stencil = np.ones((n,n))/(n*n)
+# recovered_pattern = nested_pattern['Inhibitor']
+# # recovered_pattern = 1 - recovered_pattern
+# recovered_pattern = ndimage.convolve(recovered_pattern, stencil, mode='wrap')
+# recovered_pattern = ndimage.gaussian_filter(recovered_pattern, 5.5, mode='wrap')
+
+# fig = plt.figure(figsize=(8,3))
+# axs = ImageGrid(fig, 111,
+# 			nrows_ncols=(1,3),
+# 			axes_pad=0.2,
+# 			share_all=True,
+# 			cbar_location="right",
+# 			cbar_mode="single",
+# 			cbar_size="7%",
+# 			cbar_pad=0.25,
+# 			)
+
+# fig.suptitle("Figure 1: Pre-Computed Double Gray-Scott")
+# quad0=axs[0].pcolormesh(x,y,original_pattern['Inhibitor'])
+# axs[0].set_title("a) Primary Pattern")
+# quad1=axs[1].pcolormesh(x,y,nested_pattern['Inhibitor'])
+# axs[1].set_title("b) Secondary Pattern")
+# quad2=axs[2].pcolormesh(x,y,recovered_pattern)
+# axs[2].set_title("c) Recovered Pattern")
+
+# axs[0].cax.cla()
+# cb = Colorbar(axs[0].cax, quad1)
+# cb2 = Colorbar(axs[1].cax, quad1)
+
+# [ax.set_box_aspect(1.0) for ax in axs]
+
+# fig.savefig("plots/variedgs/nested_comparisons.png")
+
+# '''
+# Just a plot of the recovered pattern.
+# '''
+# original_pattern, x, y = Model.get_last("data/gs/gs_large_scale3")
+# # Model.create_plot('variedgs/nested_pattern', 'data/variedgs/variedgs-nested3', ['Inhibitor'],)
+
+'''
+More plots
+'''
+
 original_pattern, x, y = Model.get_last("data/gs/gs_large_scale3")
 nested_pattern, _, _ = Model.get_last("data/variedgs/variedgs-nested3")
 
@@ -87,37 +136,35 @@ n = 10
 stencil = np.ones((n,n))/(n*n)
 recovered_pattern = nested_pattern['Inhibitor']
 # recovered_pattern = 1 - recovered_pattern
-# recovered_pattern = ndimage.convolve(recovered_pattern, stencil, mode='wrap')
-# recovered_pattern = ndimage.gaussian_filter(recovered_pattern, 5.5, mode='wrap')
+recovered_pattern = ndimage.convolve(recovered_pattern, stencil, mode='wrap')
+recovered_pattern = ndimage.gaussian_filter(recovered_pattern, 5.5, mode='wrap')
 
-import pywt
-a, (hd, vd, dd) = pywt.dwt2(recovered_pattern, 'bior1.3')
-recovered_pattern = hd + vd + dd
-
-fig = plt.figure(figsize=(8,4))
+fig = plt.figure(figsize=(8,3))
 axs = ImageGrid(fig, 111,
-			nrows_ncols=(1,2),
-			axes_pad=0.25,
+			nrows_ncols=(1,3),
+			axes_pad=0.2,
 			share_all=True,
-			# cbar_location="right",
-			# cbar_mode="single",
-			# cbar_size="7%",
-			# cbar_pad=0.25,
+			cbar_location="right",
+			cbar_mode="single",
+			cbar_size="7%",
+			cbar_pad=0.25,
 			)
 
-fig.suptitle("Original Pattern v Recovered Pattern")
-quad0=axs[0].imshow(original_pattern['Inhibitor'])
-axs[0].set_title("Primary Pattern")
-quad1=axs[1].imshow(recovered_pattern)
-axs[1].set_title("Secondary Pattern (Wavelet)")
+fig.suptitle("Figure 1: Pre-Computed Double Gray-Scott")
+quad0=axs[0].pcolormesh(x,y,original_pattern['Inhibitor'])
+axs[0].set_title("a) Primary Pattern")
+quad1=axs[1].pcolormesh(x,y,nested_pattern['Inhibitor'])
+axs[1].set_title("b) Secondary Pattern")
+quad2=axs[2].pcolormesh(x,y,recovered_pattern)
+axs[2].set_title("c) Recovered Pattern")
 
-# axs[0].cax.cla()
-# cb = Colorbar(axs[0].cax, quad1)
-# cb2 = Colorbar(axs[1].cax, quad1)
+axs[0].cax.cla()
+cb = Colorbar(axs[0].cax, quad1)
+cb2 = Colorbar(axs[1].cax, quad1)
 
-# [ax.set_box_aspect(1.0) for ax in axs]
+[ax.set_box_aspect(1.0) for ax in axs]
 
-fig.savefig("plots/variedgs/nested_comp_wavelet.png")
+fig.savefig("plots/variedgs/nested_comparisons.png")
 
 '''
 Just a plot of the recovered pattern.

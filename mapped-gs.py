@@ -153,6 +153,9 @@ Generate last frame plot of the above model
 
 original_pattern, x, y = Model.get_last("data/mappedgs/parallel_phase_fast")
 
+print(original_pattern.keys())
+# input()
+
 # Perform a Gaussian blur and then 
 # average over an area of n*n cells
 n = 15
@@ -161,12 +164,14 @@ recovered_pattern = original_pattern['Inhibitor']
 recovered_pattern = ndimage.convolve(recovered_pattern, stencil, mode='wrap')
 recovered_pattern = ndimage.gaussian_filter(recovered_pattern, 5.5, mode='wrap')
 
+
+
 # fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(10, 5), sharey=True)
 
-fig = plt.figure(figsize=(8,4))
+fig = plt.figure(figsize=(8,3))
 axs = ImageGrid(fig, 111,
-			nrows_ncols=(1,2),
-			axes_pad=0.25,
+			nrows_ncols=(1,3),
+			axes_pad=0.2,
 			share_all=True,
 			cbar_location="right",
 			cbar_mode="single",
@@ -174,11 +179,13 @@ axs = ImageGrid(fig, 111,
 			cbar_pad=0.25,
 			)
 
-# fig.suptitle("Primary Pattern v Recovered Pattern")
+fig.suptitle("Figure 2: Parallel Double Gray-Scott")
 quad0=axs[0].pcolormesh(x,y,original_pattern['Mapped_Kill'])
-axs[0].set_title("Primary Pattern")
-quad1=axs[1].pcolormesh(x,y,recovered_pattern)
-axs[1].set_title("Secondary Pattern (Average + Gauss)")
+axs[0].set_title("a) Primary Pattern")
+quad1=axs[1].pcolormesh(x,y,original_pattern['Inhibitor'])
+axs[1].set_title("b) Secondary Pattern")
+quad2=axs[2].pcolormesh(x,y,recovered_pattern)
+axs[2].set_title("c) Recovered Pattern")
 
 axs[0].cax.cla()
 cb = Colorbar(axs[0].cax, quad1)
@@ -186,4 +193,4 @@ cb = Colorbar(axs[0].cax, quad1)
 
 [ax.set_box_aspect(1.0) for ax in axs]
 
-fig.savefig("plots/mappedgs/bad_scale_comp_2.png")
+fig.savefig("plots/mappedgs/parallel-comp-similar.png")
